@@ -1,6 +1,11 @@
 import { Accessor, Setter } from "solid-js";
 import { Task, TaskDraft } from "../models/Task";
 
+interface Relation {
+  taskId: number;
+  dependsOnId: number;
+}
+
 export interface Store {
     getRootId(): number
     createTask(parentId: number, draft: TaskDraft): void
@@ -9,4 +14,5 @@ export interface Store {
     unlink(id: number, parentId: number): void
     setDone(id: number, isDone: boolean): void
     setDescription(id: number, description: string): void
+    getTree(rootId: number): Accessor<{ relations: Relation[] }>
 }

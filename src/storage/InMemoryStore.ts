@@ -1,8 +1,13 @@
-import { createSignal, onCleanup } from "solid-js";
+import { Accessor, createSignal, onCleanup } from "solid-js";
 import { Task, TaskDraft, taskMethods } from "../models/Task";
 import { Store } from "./store";
 
 const EMPTY_ARRAY: number[] = []
+
+interface Relation {
+  taskId: number;
+  dependsOnId: number;
+}
 
 function mapHash<K extends string | number, T1, T2>(
   o: Record<K, T1>,
@@ -102,6 +107,19 @@ export class InMemoryStore implements Store {
   }
 
   getTask(id: number) {
+    if (id === this.getRootId()) {
+      const [f] = createSignal<Task>({
+        id,
+        title: 'Root',
+        description: '',
+        result: '',
+        isDone: false,
+        postponedUntil: null,
+      })
+      
+      return f
+    }
+
     const [task, setTask] = createSignal<Task>(this.tasks[id])
     this.onUpdate(() => {
       setTask(this.tasks[id])
@@ -141,5 +159,40 @@ export class InMemoryStore implements Store {
       }
       this.trigger()
     }
+  }
+  
+  getTree(rootId: number): Accessor<{ relations: Relation[]; }> {
+    const [rels, setRels] = createSignal<{ relations: Relation[]}>({relations: []})
+    
+    const upd = () => {
+      const queue = [rootId]
+      const visited: {[key: number]: boolean} = {}
+      const result: Relation[] = []
+      
+      while (queue.length > 0) {
+        const current = queue.shift()
+        if (!current || visited[current]) {
+          continue        
+        }
+        const children = this.children[current]
+        if (children) {
+          for (let i = 0; i < children.length; i++) {
+            const child = children[i]
+            result.push({
+              taskId: current,
+              dependsOnId: child
+            })
+            queue.unshift(child)
+          }
+        }
+      }
+      setRels({ relations: result })
+    }
+    
+    upd()
+    this.onUpdate(upd)
+    
+    
+    return rels
   }
 }

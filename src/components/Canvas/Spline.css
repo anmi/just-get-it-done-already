@@ -1,0 +1,27 @@
+.Spline {
+  position: absolute;
+}
+
+.Spline__path_highlighted {
+  stroke: red;
+}
+
+.Spline__remove {
+  width: 10px;
+  height: 10px;
+  background: red;
+  border-radius: 16px;
+  border: 1px solid var(--contrastOutline);
+  position: absolute;
+  font-size: 10px;
+  line-height: 10px;
+  text-align: center;
+  font-size: 8px;
+  z-index: 20;
+  color: white;
+}
+
+.Spline__remove:hover {
+  transform: scale(1.5);
+  cursor: pointer;
+}

@@ -7,6 +7,7 @@ import { InMemoryStore } from './storage/InMemoryStore';
 import { TaskList } from './components/TaskList';
 import { UIState, UIStateContext } from './storage/UIState';
 import { TaskFull } from './components/TaskFull';
+import { Board } from './components/Board';
 
 const App: Component = () => {
   const store = new InMemoryStore(1)
@@ -18,8 +19,9 @@ const App: Component = () => {
           <Show when={uistate.openedTask() != null}>
             <TaskFull id={uistate.openedTask()!} />
           </Show>
-          <CreateTask parentId={store.getRootId()} />
-          <TaskList parentId={store.getRootId()} />
+          <Board id={store.getRootId()}/>
+          {/* <CreateTask parentId={store.getRootId()} />
+          <TaskList parentId={store.getRootId()} /> */}
         </UIStateContext.Provider>
       </StoreContext.Provider>
     </div>
