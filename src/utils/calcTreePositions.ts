@@ -139,7 +139,7 @@ function link(current: number, next: Link | null = null) {
   return { current, next };
 }
 
-export function calcXPosition(rootId: number, spt: DirectedRelationsHash) {
+export function calcBreadthPosition(rootId: number, spt: DirectedRelationsHash) {
   // const stack = [link(rootId)]
   const positions: TasksScalar = {};
 
@@ -219,9 +219,9 @@ export function calcTreePositions(rootId: number, relations: Relation[]) {
     redundantHash[rel.taskId] = redundantHash[rel.taskId] || {}
     redundantHash[rel.taskId][rel.dependsOnId] = true
   }
-  const yPositions = getMaxPaths(rootId, mappings);
+  const depthPositions = getMaxPaths(rootId, mappings);
   const spt = getShortestPathsTree(rootId, mappings);
-  const xPositions = calcXPosition(rootId, spt);
+  const breadthPositions = calcBreadthPosition(rootId, spt);
   const positions: { [id: number]: { x: number; y: number } } = {};
   const elementsList: number[] = [];
 
@@ -231,8 +231,8 @@ export function calcTreePositions(rootId: number, relations: Relation[]) {
   while (queue.length) {
     const head = queue.shift()!;
     elementsList.push(head);
-    const y = yPositions[head] * 70 + 20;
-    const x = xPositions[head] * 100 + 20;
+    const x = depthPositions[head] * 120 + 20;
+    const y = breadthPositions[head] * 50 + 20;
     maxY = Math.max(y, maxY);
     maxX = Math.max(x, maxX);
 

@@ -1,7 +1,7 @@
 import { describe, it, expect, assert } from "vitest";
 import {
   calcTreeBranchesWidth,
-  calcXPosition,
+  calcBreadthPosition,
   getMaxPaths,
   getRelationsMappings,
   getShortestPathsTree,
@@ -78,7 +78,7 @@ describe("calcTreePositions", () => {
   });
 
   it("Should calculate horizontal position", () => {
-    const positions = calcXPosition(
+    const positions = calcBreadthPosition(
       1,
       getShortestPathsTree(1, getRelationsMappings(relations))
     );

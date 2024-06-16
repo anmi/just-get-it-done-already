@@ -30,12 +30,13 @@ function getPath(props: SplineProps): string {
   const x0 = GAP;
   const y0 = GAP;
   const midy = Math.abs((from.y - to.y) / 2) + GAP;
+  const midx = Math.abs((from.x - to.x) / 2) + GAP;
   const xOff = Math.abs(from.x - to.x) + GAP;
   const yOff = Math.abs(from.y - to.y) + GAP;
-  if (from.x < to.x) {
-    return `M${x0},${y0} C${x0},${midy} ${xOff},${midy} ${xOff},${yOff}`;
+  if (from.y < to.y) {
+    return `M${x0},${y0} C${midx},${y0} ${midx},${yOff} ${xOff},${yOff}`;
   } else {
-    return `M${xOff},${y0} C${xOff},${midy} ${x0},${midy} ${y0},${yOff}`;
+    return `M${xOff},${y0} C${midx},${y0} ${midx},${yOff} ${y0},${yOff}`;
   }
 }
 
