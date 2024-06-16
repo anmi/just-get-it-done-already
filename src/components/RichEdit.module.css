@@ -1,0 +1,10 @@
+.content {
+    display: flex;
+    flex-direction: row;
+    position: relative;
+}
+
+.preview {
+    min-width: 50%;
+    /* flex-grow: 2; */
+}
