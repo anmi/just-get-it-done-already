@@ -19,6 +19,30 @@ function mapHash<K extends string | number, T1, T2>(
   ) as any
 }
 
+const hasChild = (id: number, maybeChild: number, childrenHash: { [key: number]: number[] }) => {
+  const queue = [id]
+  const visited: { [key: string]: true } = {}
+
+  while (queue.length > 0) {
+    const head = queue.unshift();
+    if (visited[head]) {
+      continue
+    }
+    visited[head] = true
+
+    if (head === maybeChild) return true;
+
+    const children = childrenHash[head]
+
+    for (let i = 0; i < children.length; i++) {
+      const child = children[i]
+      queue.push(child)
+    }
+  }
+
+  return false
+}
+
 export class InMemoryStore implements Store {
   rootId: number
   tasks: {
@@ -38,7 +62,7 @@ export class InMemoryStore implements Store {
 
     if (rawStored) {
       const data = JSON.parse(rawStored)
-      
+
       this.tasks = mapHash(data.tasks, taskMethods.deserialize)
       this.children = data.children
       this.rootId = data.rootId
@@ -116,7 +140,7 @@ export class InMemoryStore implements Store {
         isDone: false,
         postponedUntil: null,
       })
-      
+
       return f
     }
 
@@ -127,19 +151,36 @@ export class InMemoryStore implements Store {
 
     return task
   }
-  
+
   unlink(id: number, parentId: number): void {
     const children = this.children[parentId]
     if (children) {
       this.children[parentId] = children.filter(c => c != id)
     }
-    
+
     this.trigger()
   }
-  
+
+  link(id: number, parentId: number): void {
+    if (id == parentId) {
+      return;
+    }
+    const children = this.children[parentId]
+    if (children.findIndex(p => p === id) != -1) {
+      return;
+    }
+
+    if (hasChild(id, parentId, this.children)) {
+      return
+    }
+
+    this.children[parentId] = [...children, id]
+    this.trigger()
+  }
+
   setDone(id: number, isDone: boolean) {
     const task = this.tasks[id]
-    
+
     if (task) {
       this.tasks[id] = {
         ...task,
@@ -148,10 +189,10 @@ export class InMemoryStore implements Store {
       this.trigger()
     }
   }
-  
+
   setDescription(id: number, description: string): void {
     const task = this.tasks[id]
-    
+
     if (task) {
       this.tasks[id] = {
         ...task,
@@ -160,19 +201,19 @@ export class InMemoryStore implements Store {
       this.trigger()
     }
   }
-  
+
   getTree(rootId: number): Accessor<{ relations: Relation[]; }> {
-    const [rels, setRels] = createSignal<{ relations: Relation[]}>({relations: []})
-    
+    const [rels, setRels] = createSignal<{ relations: Relation[] }>({ relations: [] })
+
     const upd = () => {
       const queue = [rootId]
-      const visited: {[key: number]: boolean} = {}
+      const visited: { [key: number]: boolean } = {}
       const result: Relation[] = []
-      
+
       while (queue.length > 0) {
         const current = queue.shift()
         if (!current || visited[current]) {
-          continue        
+          continue
         }
         const children = this.children[current]
         if (children) {
@@ -188,11 +229,11 @@ export class InMemoryStore implements Store {
       }
       setRels({ relations: result })
     }
-    
+
     upd()
     this.onUpdate(upd)
-    
-    
+
+
     return rels
   }
 }
