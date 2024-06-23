@@ -5,12 +5,14 @@ export interface Task {
   result: string;
   isDone: boolean
   postponedUntil: Date | null;
+  isPriorityList: boolean;
 }
 
 export interface TaskDraft {
   title: string;
   description: string;
   result: string;
+  isPriorityList: boolean;
 }
 
 export const taskMethods = {

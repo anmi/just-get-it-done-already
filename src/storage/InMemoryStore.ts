@@ -139,6 +139,7 @@ export class InMemoryStore implements Store {
         result: '',
         isDone: false,
         postponedUntil: null,
+        isPriorityList: false,
       })
 
       return f

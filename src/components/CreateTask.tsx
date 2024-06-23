@@ -17,7 +17,8 @@ export const CreateTask = (props: CreateTaskProps) => {
           store.createTask(props.parentId, {
             title: title(),
             description: '',
-            result: ''
+            result: '',
+            isPriorityList: false
           })
           setTitle('')
         }
