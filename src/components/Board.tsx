@@ -1,4 +1,4 @@
-import { For, createMemo } from "solid-js"
+import { For, createMemo, createSignal } from "solid-js"
 import { useStore } from "../storage/StoreContext"
 import { calcTreePositions } from "../utils/calcTreePositions"
 import css from './Board.module.css'
@@ -12,18 +12,26 @@ interface BoardProps {
 export const Board = (props: BoardProps) => {
   const store = useStore()
   
-  const rels = createMemo(() => store.getTree(props.id)())
+  const [showCompleted, setShowCompleted] = createSignal(false)
+  const rels = createMemo(() => store.getTree(props.id, showCompleted())())
 
   const positions = createMemo(() => {
     return calcTreePositions(props.id, rels().relations)
   })
 
-  return <div class={css.container} style={{
+  return <div class={css.container}>
+    <label >
+      <input type="checkbox" onChange={e => {
+        setShowCompleted(e.currentTarget.checked)
+      }} checked={showCompleted()}/>
+        show completed
+    </label>
+  <div style={{
     height: `${positions().maxY}px`,
     width: `${positions().maxX}px`,
     position: 'relative'
   }}>
-    Board:
+    {/* Board: */}
     <For each={rels().relations}>
       {rel => {
         const parent = positions().positions[rel.taskId]
@@ -40,7 +48,7 @@ export const Board = (props: BoardProps) => {
       }}
     </For>
     <For each={positions().elementsList}>
-      {id => {
+      {(id, idx) => {
         const position = positions().positions[id]
 
         return <TaskBoardItem
@@ -51,5 +59,6 @@ export const Board = (props: BoardProps) => {
       }
       }
     </For>
+  </div>
   </div>
 }

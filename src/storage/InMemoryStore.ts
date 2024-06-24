@@ -1,4 +1,4 @@
-import { Accessor, createSignal, onCleanup } from "solid-js";
+import { Accessor, Setter, createSignal, onCleanup } from "solid-js";
 import { Task, TaskDraft, taskMethods } from "../models/Task";
 import { Store } from "./store";
 
@@ -48,6 +48,9 @@ export class InMemoryStore implements Store {
   tasks: {
     [key: number]: Task
   } = {}
+  tasksSignals: {
+    [key: number]: { get: Accessor<Task>, set: Setter<Task> }
+  } = {}
   children: {
     [key: number]: number[]
   } = {}
@@ -64,13 +67,17 @@ export class InMemoryStore implements Store {
       const data = JSON.parse(rawStored)
 
       this.tasks = mapHash(data.tasks, taskMethods.deserialize)
+      this.tasksSignals = mapHash(this.tasks, task => {
+        const [get, set] = createSignal(task)
+        return {get, set}
+      })
       this.children = data.children
       this.rootId = data.rootId
       this.incId = data.incId
     }
   }
-
-  trigger() {
+  
+  save() {
     localStorage.setItem('tasks',
       JSON.stringify({
         tasks: mapHash(this.tasks, taskMethods.serialize),
@@ -79,6 +86,10 @@ export class InMemoryStore implements Store {
         incId: this.incId,
       })
     )
+  }
+
+  trigger() {
+    this.save()
     for (let i = 0; i < this.onChange.length; i++) {
       const fn = this.onChange[i]
       fn()
@@ -104,6 +115,18 @@ export class InMemoryStore implements Store {
   getRootId() {
     return this.rootId
   }
+  
+  setTask(task: Task) {
+    this.tasks[task.id] = task
+    if (!this.tasksSignals[task.id]) {
+      const [get, set] = createSignal<Task>(task)
+      this.tasksSignals[task.id] = {get, set}
+    }
+    
+    this.tasksSignals[task.id].set(task)
+    
+    this.trigger()
+  }
 
   createTask(parentId: number, draft: TaskDraft) {
     const task: Task = {
@@ -115,7 +138,7 @@ export class InMemoryStore implements Store {
 
     this.children[parentId] = [...(this.children[parentId] || EMPTY_ARRAY), task.id]
 
-    this.tasks[task.id] = task
+    this.setTask(task)
 
     this.trigger()
   }
@@ -144,13 +167,8 @@ export class InMemoryStore implements Store {
 
       return f
     }
-
-    const [task, setTask] = createSignal<Task>(this.tasks[id])
-    this.onUpdate(() => {
-      setTask(this.tasks[id])
-    })
-
-    return task
+    
+    return this.tasksSignals[id].get
   }
 
   unlink(id: number, parentId: number): void {
@@ -181,14 +199,8 @@ export class InMemoryStore implements Store {
 
   setDone(id: number, isDone: boolean) {
     const task = this.tasks[id]
-
-    if (task) {
-      this.tasks[id] = {
-        ...task,
-        isDone
-      }
-      this.trigger()
-    }
+    
+    this.setTask({...task, isDone})
   }
 
   setDescription(id: number, description: string): void {
@@ -203,7 +215,7 @@ export class InMemoryStore implements Store {
     }
   }
 
-  getTree(rootId: number): Accessor<{ relations: Relation[]; }> {
+  getTree(rootId: number, showCompleted: boolean): Accessor<{ relations: Relation[]; }> {
     const [rels, setRels] = createSignal<{ relations: Relation[] }>({ relations: [] })
 
     const upd = () => {
@@ -220,6 +232,13 @@ export class InMemoryStore implements Store {
         if (children) {
           for (let i = 0; i < children.length; i++) {
             const child = children[i]
+
+            const task = this.tasks[child]
+            if (task) {
+              if (!showCompleted && task.isDone) {
+                continue
+              }
+            }
             result.push({
               taskId: current,
               dependsOnId: child
