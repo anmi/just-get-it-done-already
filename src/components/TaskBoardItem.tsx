@@ -16,7 +16,8 @@ export const TaskBoardItem = (props: TaskBoardItemProps) => {
   return <div style={{
     position: 'absolute',
     left: `${props.left}px`,
-    top: `${props.top}px`
+    top: `${props.top}px`,
+    transition: "left 300ms, top 300ms"
   }}
   >
     <a href="#" onClick={e => {

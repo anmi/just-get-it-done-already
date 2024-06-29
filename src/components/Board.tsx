@@ -13,10 +13,11 @@ export const Board = (props: BoardProps) => {
   const store = useStore()
   
   const [showCompleted, setShowCompleted] = createSignal(false)
+  const [shift, setShift] = createSignal(false)
   const rels = createMemo(() => store.getTree(props.id, showCompleted())())
 
   const positions = createMemo(() => {
-    return calcTreePositions(props.id, rels().relations)
+    return calcTreePositions(props.id, rels().relations, shift())
   })
 
   return <div class={css.container}>
@@ -26,6 +27,12 @@ export const Board = (props: BoardProps) => {
       }} checked={showCompleted()}/>
         show completed
     </label>
+    <label >
+      <input type="checkbox" onChange={e => {
+        setShift(e.currentTarget.checked)
+      }} checked={showCompleted()}/>
+        shift
+    </label>
   <div style={{
     height: `${positions().maxY}px`,
     width: `${positions().maxX}px`,
@@ -34,11 +41,9 @@ export const Board = (props: BoardProps) => {
     {/* Board: */}
     <For each={rels().relations}>
       {rel => {
-        const parent = positions().positions[rel.taskId]
-        const child = positions().positions[rel.dependsOnId]
         return <Spline
-          from={parent}
-          to={child}
+          from={positions().positions[rel.taskId]}
+          to={positions().positions[rel.dependsOnId]}
           onRemoveClick={() => {
             
           }}

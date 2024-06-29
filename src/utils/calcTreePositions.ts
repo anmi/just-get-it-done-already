@@ -208,7 +208,44 @@ export function isRedundant(hash: RedundantHash, rel: Relation) {
   return false
 }
 
-export function calcTreePositions(rootId: number, relations: Relation[]) {
+export function shiftPositionsToBottom(rootId: number, depthPositions: TasksScalar, relsMaps: RelationsHash) {
+  let leafs = []
+  let maxDepth = 0
+  const allElements = Object.keys(depthPositions)
+  for (let i = 0; i < allElements.length; i++) {
+    const item = parseInt(allElements[i], 10)
+    const children = relsMaps.children[item]
+    if (!children || children.length === 0) {
+      leafs.push(item)
+      maxDepth = Math.max(maxDepth, depthPositions[item])
+    }
+  }
+  
+  let queue = leafs.map(id => ({ id, level: maxDepth }))
+  let newDepths: TasksScalar = {}
+  
+  while (queue.length) {
+    const item = queue.shift()
+    if (!item) break
+    
+    const depth = Math.min(newDepths[item.id] ?? maxDepth, item.level)
+    newDepths[item.id] = depth
+      
+    const parents = relsMaps.parents[item.id] || []
+    
+    for (let i = 0; i < parents.length; i++) {
+      const parent = parents[i]
+      queue.push({
+        id: parent,
+        level: item.level - 1
+      })
+    }
+  }
+  
+  return newDepths
+}
+
+export function calcTreePositions(rootId: number, relations: Relation[], shiftDepths = false) {
   const rels = removeRedundantRelations(rootId, relations)
   const mappings = getRelationsMappings(
     rels.filtered
@@ -219,7 +256,10 @@ export function calcTreePositions(rootId: number, relations: Relation[]) {
     redundantHash[rel.taskId] = redundantHash[rel.taskId] || {}
     redundantHash[rel.taskId][rel.dependsOnId] = true
   }
-  const depthPositions = getMaxPaths(rootId, mappings);
+  let depthPositions = getMaxPaths(rootId, mappings);
+  if (shiftDepths) {
+    depthPositions = shiftPositionsToBottom(rootId, depthPositions, mappings)
+  }
   const spt = getShortestPathsTree(rootId, mappings);
   const breadthPositions = calcBreadthPosition(rootId, spt);
   const positions: { [id: number]: { x: number; y: number } } = {};
