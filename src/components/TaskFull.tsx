@@ -1,10 +1,11 @@
-import { createMemo } from "solid-js"
+import { createEffect, createMemo, onCleanup } from "solid-js"
 import { useStore } from "../storage/StoreContext"
 import styles from './TaskFull.module.css'
 import { RichEdit } from "./RichEdit"
 import { TaskList } from "./TaskList"
 import { CreateTask } from "./CreateTask"
 import { TitleEditable } from "./TItleEditable"
+import { useUIState } from "../storage/UIState"
 
 interface TaskFullProps {
   id: number
@@ -12,8 +13,20 @@ interface TaskFullProps {
 
 export const TaskFull = (props: TaskFullProps) => {
   const store = useStore()
+  const uiState = useUIState()
 
   const task = createMemo(() => store.getTask(props.id)())
+  
+  const handleGlobalClick = (e: KeyboardEvent) => {
+    if (e.code === 'Escape') {
+      uiState.setOpenedTask(null)
+    }
+  }
+  
+  document.addEventListener('keydown', handleGlobalClick)
+  onCleanup(() => {
+    document.removeEventListener('keydown', handleGlobalClick)
+  })
 
   return <div class={styles.cont}>
     <div style={{ display: 'flex', "flex-direction": 'row'}}>
@@ -21,6 +34,9 @@ export const TaskFull = (props: TaskFullProps) => {
         store.setDone(props.id, e.currentTarget.checked)
       }} />
       <TitleEditable id={props.id} />
+      <button onClick={e => {
+        uiState.setOpenedTask(null)
+      }}>close</button>
     </div>
     <div>
       <RichEdit value={task().description} onChange={value => {
