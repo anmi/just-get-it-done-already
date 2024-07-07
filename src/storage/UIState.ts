@@ -1,15 +1,28 @@
 import { Accessor, Setter, createContext, createSignal, useContext } from "solid-js"
 
 export class UIState {
-  // private openedTask = createSignal<number | null>(null)
-  
   openedTask: Accessor<number | null>
-  setOpenedTask: Setter<number | null>
+  _setOpenedTask: Setter<number | null>
   
   constructor() {
     const [openedTask, setOpenedTask] = createSignal<number | null>(null)
     this.openedTask = openedTask
-    this.setOpenedTask = setOpenedTask
+    this._setOpenedTask = setOpenedTask
+    
+    const rawStored = localStorage.getItem('uistate')
+    
+    if (rawStored) {
+      const data = JSON.parse(rawStored)
+      
+      this._setOpenedTask(data.openedTask)
+    }
+  }
+
+  setOpenedTask(value: number | null) {
+    this._setOpenedTask(value)
+    localStorage.setItem('uistate', JSON.stringify({
+      openedTask: value,
+    }))
   }
 }
 
