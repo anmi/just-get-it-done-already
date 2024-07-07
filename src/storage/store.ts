@@ -18,7 +18,7 @@ export interface Store {
   setTitle(id: number, title: string): void
   setDescription(id: number, description: string): void
   setResult(id: number, description: string): void
-  getTree(rootId: number, showCompleted: boolean): Accessor<{ relations: Relation[] }>
+  getTree(rootId: number, showCompleted: boolean): Accessor<{ relations: Relation[], unlocked: number[] }>
   
   updateFromJSON(value: string): void
 }

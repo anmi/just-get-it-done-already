@@ -279,39 +279,73 @@ export class InMemoryStore implements Store {
     })
   }
 
-  getTree(rootId: number, showCompleted: boolean): Accessor<{ relations: Relation[]; }> {
-    const [rels, setRels] = createSignal<{ relations: Relation[] }>({ relations: [] })
+  getTree(rootId: number, showCompleted: boolean): Accessor<{ relations: Relation[]; unlocked: number[]; }> {
+    const [rels, setRels] = createSignal<{ relations: Relation[], unlocked: number[] }>({ relations: [], unlocked: [] })
 
     const upd = () => {
-      const queue = [rootId]
-      const visited: { [key: number]: boolean } = {}
+      const queue = [{ id: rootId, priority: 2 }]
+      // 0 | undefined = not visited
+      // 1 = visited with low priority
+      // 2 = visited with high priority
+      const visited: { [key: number]: number } = {}
       const result: Relation[] = []
+      const leaves: number[] = []
+      const leavesHash: { [key: number]: boolean } = {}
 
       while (queue.length > 0) {
         const current = queue.shift()
-        if (!current || visited[current]) {
+        if (!current) continue
+        const { id, priority } = current
+        if (visited[id] && visited[id] > priority) {
           continue
         }
-        const children = this.children[current]
+        visited[id] = priority
+        const children = this.children[id]
+        if (!children || children.length === 0 || (!showCompleted && children.every(id => this.tasks[id].isDone))) {
+          if (!leavesHash[id]) {
+            leaves.push(id)
+            leavesHash[id] = true
+          }
+        }
         if (children) {
+          const task = this.tasks[id]
+          const priorityParent = task ? this.tasks[id].isPriorityList : false
+          let isHighPriority = true
           for (let i = 0; i < children.length; i++) {
             const child = children[i]
 
             const task = this.tasks[child]
+
             if (task) {
               if (!showCompleted && task.isDone) {
                 continue
               }
             }
+            const isDone = task.isDone
             result.push({
-              taskId: current,
+              taskId: id,
               dependsOnId: child
             })
-            queue.unshift(child)
+            queue.unshift({
+              id: child,
+              priority: isDone ? 1 :
+                (isHighPriority || !priorityParent ? priority : 1),
+            })
+            
+            if (!isDone) {
+              isHighPriority = false
+            }
           }
         }
       }
-      setRels({ relations: result })
+      const unlocked = []
+      for (let i = 0; i < leaves.length; i++) {
+        const leaf = leaves[i]
+        if (visited[leaf] === 2) {
+          unlocked.push(leaf)
+        }
+      }
+      setRels({ relations: result, unlocked })
     }
 
     upd()

@@ -21,6 +21,7 @@ export const Board = (props: BoardProps) => {
     return calcTreePositions(props.id, rels().relations, {
       shiftDepths: shift(),
       flipDepth: flipDepth(),
+      unlocked: rels().unlocked
     })
   })
 
