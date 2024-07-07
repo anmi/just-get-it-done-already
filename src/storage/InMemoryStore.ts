@@ -193,13 +193,43 @@ export class InMemoryStore implements Store {
 
     this.trigger()
   }
+  
+  rearrange(id: number, parentId: number, positionId: number) {
+    const children = this.children[parentId]
+    
+    const targetPos = children.findIndex(f => f === positionId)
+    const currentPos = children.findIndex(f => f === id) 
 
-  link(id: number, parentId: number): void {
+    if (targetPos < currentPos) {
+      this.children[parentId] = [
+        ...children.slice(0, targetPos),
+        id,
+        positionId,
+        ...children.slice(targetPos + 1, currentPos),
+        ...children.slice(currentPos + 1)
+      ]
+    } else {
+      this.children[parentId] = [
+        ...children.slice(0, currentPos),
+        ...children.slice(currentPos + 1, targetPos),
+        positionId,
+        id,
+        ...children.slice(targetPos + 1)
+      ]
+    }
+    
+    this.trigger()
+  }
+
+  link(id: number, parentId: number, positionId: number): void {
     if (id == parentId) {
       return;
     }
     const children = this.children[parentId] || []
     if (children.findIndex(p => p === id) != -1) {
+      if (positionId) {
+        this.rearrange(id, parentId, positionId)
+      }
       return;
     }
 

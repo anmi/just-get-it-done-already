@@ -1,3 +1,33 @@
 .taskListItem {
     padding: 4px 0;
 }
+
+.taskListDrag {
+    display: inline-block;
+    position: relative;
+    width: 10px;
+    height: 12px;
+    cursor:grab;
+}
+
+.taskListDrag::after {
+    content: '';
+    border-left: 1px solid black;
+    border-right: 1px solid black;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: 2px;
+}
+
+.taskListDrag::before {
+    content: '';
+    border-left: 1px solid black;
+    border-right: 1px solid black;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    width: 2px;
+}

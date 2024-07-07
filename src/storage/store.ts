@@ -12,7 +12,7 @@ export interface Store {
   getChildren(parentId: number): Accessor<number[]>
   getTask(id: number): Accessor<Task>
   unlink(id: number, parentId: number): void
-  link(id: number, parentId: number): void
+  link(id: number, parentId: number, positionId?: number): void
   setDone(id: number, isDone: boolean): void
   setIsPriorityList(id: number, isPriorityList: boolean): void
   setTitle(id: number, title: string): void
