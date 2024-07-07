@@ -1,4 +1,4 @@
-import { Component, Show } from "solid-js";
+import { Component, createMemo, Show } from "solid-js";
 import "./Spline.css";
 import { Point } from "../../models/Point";
 import { classes } from "../../utils/classes";
@@ -25,7 +25,12 @@ function avg(a: number, b: number) {
 
 const GAP = 20;
 
-function getPath(props: SplineProps): string {
+interface GetPathParams {
+  from: Point;
+  to: Point;
+}
+
+function getPath(props: GetPathParams): string {
   const { from, to } = props;
   const x0 = GAP;
   const y0 = GAP;
@@ -41,23 +46,36 @@ function getPath(props: SplineProps): string {
 }
 
 export const Spline: Component<SplineProps> = (props) => {
+  const pos = createMemo(() => {
+    if (props.from.x < props.to.x) {
+      return {
+        from: props.from,
+        to: props.to,
+      }
+    } else {
+      return {
+        to: props.from,
+        from: props.to,
+      }
+    }
+  })
   return (
     <div
       class="Spline"
       style={{
-        top: minTop(props.from, props.to) - GAP + "px",
-        left: minLeft(props.from, props.to) - GAP + "px",
+        top: minTop(pos().from, pos().to) - GAP + "px",
+        left: minLeft(pos().from, pos().to) - GAP + "px",
       }}
     >
       <svg
-        width={Math.abs(props.from.x - props.to.x) + 2 * GAP}
-        height={Math.abs(props.from.y - props.to.y) + 2 * GAP}
+        width={Math.abs(pos().from.x - pos().to.x) + 2 * GAP}
+        height={Math.abs(pos().from.y - pos().to.y) + 2 * GAP}
         stroke="#777"
-        opacity={props.muted ? '30%' : '100%'}
+        opacity={props.muted ? '30%' : '60%'}
         stroke-width={1}
         class={classes(props.removeVisible && "Spline__path_highlighted")}
       >
-        <path d={getPath(props)} fill="transparent" />
+        <path d={getPath(pos())} fill="transparent" />
       </svg>
       <Show when={props.removeVisible}>
         <div
@@ -65,8 +83,8 @@ export const Spline: Component<SplineProps> = (props) => {
           style={{
             // left: GAP + Math.abs(props.to.x - props.from.x) / 2 + "px",
             // top: GAP + Math.abs((props.from.y - props.to.y) / 2) - 5 + "px",
-            left: GAP + Math.max(props.to.x - props.from.x, 0) - 4 + "px",
-            top: GAP + Math.abs(props.from.y - props.to.y) - 8 + "px",
+            left: GAP + Math.max(pos().to.x - pos().from.x, 0) - 4 + "px",
+            top: GAP + Math.abs(pos().from.y - pos().to.y) - 8 + "px",
           }}
           onClick={props.onRemoveClick}
         >

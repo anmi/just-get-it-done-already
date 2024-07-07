@@ -14,10 +14,14 @@ export const Board = (props: BoardProps) => {
   
   const [showCompleted, setShowCompleted] = createSignal(false)
   const [shift, setShift] = createSignal(false)
+  const [flipDepth, setFlipDepth] = createSignal(false)
   const rels = createMemo(() => store.getTree(props.id, showCompleted())())
 
   const positions = createMemo(() => {
-    return calcTreePositions(props.id, rels().relations, shift())
+    return calcTreePositions(props.id, rels().relations, {
+      shiftDepths: shift(),
+      flipDepth: flipDepth(),
+    })
   })
 
   return <div class={css.container}>
@@ -32,6 +36,12 @@ export const Board = (props: BoardProps) => {
         setShift(e.currentTarget.checked)
       }} checked={shift()}/>
         shift
+    </label>
+    <label >
+      <input type="checkbox" onChange={e => {
+        setFlipDepth(e.currentTarget.checked)
+      }} checked={flipDepth()}/>
+        flip horizontally
     </label>
   <div style={{
     height: `${positions().maxY}px`,

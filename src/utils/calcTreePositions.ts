@@ -220,19 +220,19 @@ export function shiftPositionsToBottom(rootId: number, depthPositions: TasksScal
       maxDepth = Math.max(maxDepth, depthPositions[item])
     }
   }
-  
+
   let queue = leafs.map(id => ({ id, level: maxDepth }))
   let newDepths: TasksScalar = {}
-  
+
   while (queue.length) {
     const item = queue.shift()
     if (!item) break
-    
+
     const depth = Math.min(newDepths[item.id] ?? maxDepth, item.level)
     newDepths[item.id] = depth
-      
+
     const parents = relsMaps.parents[item.id] || []
-    
+
     for (let i = 0; i < parents.length; i++) {
       const parent = parents[i]
       queue.push({
@@ -241,11 +241,18 @@ export function shiftPositionsToBottom(rootId: number, depthPositions: TasksScal
       })
     }
   }
-  
+
   return newDepths
 }
 
-export function calcTreePositions(rootId: number, relations: Relation[], shiftDepths = false) {
+interface Params {
+  flipDepth: boolean
+  shiftDepths: boolean
+}
+
+export function calcTreePositions(rootId: number, relations: Relation[], params: Params) {
+  const shiftDepths = params.shiftDepths
+  const flipDepth = params.flipDepth
   const rels = removeRedundantRelations(rootId, relations)
   const mappings = getRelationsMappings(
     rels.filtered
@@ -285,11 +292,25 @@ export function calcTreePositions(rootId: number, relations: Relation[], shiftDe
     });
   }
 
+  if (flipDepth) {
+    const keys = Object.keys(positions)
+    
+    for (let i = 0; i < keys.length; i++) {
+      const key = keys[i]
+      const position = positions[key as any]
+      
+      positions[key as any] = {
+        ...position,
+        x: maxX - position.x,
+      }
+    }
+  }
+
   return {
     elementsList,
     positions,
     redundantHash,
     maxY: maxY + 100,
-    maxX: maxX + 100,
+    maxX: maxX + 200,
   };
 }
