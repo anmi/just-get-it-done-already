@@ -18,7 +18,8 @@ export const TaskBoardItem = (props: TaskBoardItemProps) => {
     position: 'absolute',
     left: `${props.left}px`,
     top: `${props.top}px`,
-    transition: "left 300ms, top 300ms"
+    transition: "left 300ms, top 300ms",
+    "max-width": '152px'
   }}
   >
     <a href="#"

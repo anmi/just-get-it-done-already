@@ -216,6 +216,11 @@ export class InMemoryStore implements Store {
 
     this.setTask({ ...task, isDone })
   }
+  
+  setIsPriorityList(id: number, isPriorityList: boolean): void {
+    const task = this.tasks[id]
+    this.setTask({ ...task, isPriorityList })
+  }
 
   setTitle(id: number, title: string): void {
     const task = this.tasks[id]

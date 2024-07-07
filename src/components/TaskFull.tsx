@@ -68,5 +68,11 @@ export const TaskFull = (props: TaskFullProps) => {
         store.setResult(props.id, value)
       }} />
     </div>
+    <label>
+      <input type="checkbox" checked={task().isPriorityList} onChange={(e) => {
+        store.setIsPriorityList(props.id, e.currentTarget.checked)
+      }}/>
+      Priority list
+    </label>
   </div>
 }
