@@ -1,4 +1,4 @@
 .cont { 
     padding: 8px;
-    border: 1px solid black;
+    min-width: 480px;
 }

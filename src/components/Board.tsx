@@ -30,7 +30,7 @@ export const Board = (props: BoardProps) => {
     <label >
       <input type="checkbox" onChange={e => {
         setShift(e.currentTarget.checked)
-      }} checked={showCompleted()}/>
+      }} checked={shift()}/>
         shift
     </label>
   <div style={{

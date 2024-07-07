@@ -32,6 +32,7 @@ export const RichEdit = (props: RichEditProps) => {
         setDraft(props.value)
       }}>cancel</button>
       <button onClick={() => {
+        setIsEdit(false)
         props.onChange(draft())
       }}>save</button>
     </Show>

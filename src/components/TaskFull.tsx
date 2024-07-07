@@ -24,7 +24,7 @@ export const TaskFull = (props: TaskFullProps) => {
         store.setDescription(props.id, value)
       }} />
     </div>
-    <CreateTask parentId={props.id} />
     <TaskList parentId={props.id} />
+    <CreateTask parentId={props.id} />
   </div>
 }

@@ -1,10 +1,8 @@
-import { Show, createSignal, type Component } from 'solid-js';
+import { Show, type Component } from 'solid-js';
 
 import styles from './App.module.css';
-import { CreateTask } from './components/CreateTask';
 import { StoreContext } from './storage/StoreContext';
 import { InMemoryStore } from './storage/InMemoryStore';
-import { TaskList } from './components/TaskList';
 import { UIState, UIStateContext } from './storage/UIState';
 import { TaskFull } from './components/TaskFull';
 import { Board } from './components/Board';
@@ -16,12 +14,16 @@ const App: Component = () => {
     <div class={styles.App}>
       <StoreContext.Provider value={store}>
         <UIStateContext.Provider value={uistate}>
-          <Show when={uistate.openedTask() != null}>
-            <TaskFull id={uistate.openedTask()!} />
-          </Show>
-          <Board id={store.getRootId()}/>
-          {/* <CreateTask parentId={store.getRootId()} />
-          <TaskList parentId={store.getRootId()} /> */}
+          <div class={styles.layout}>
+            <Show when={uistate.openedTask() != null}>
+              <div class={styles.layoutTask}>
+                <TaskFull id={uistate.openedTask()!} />
+              </div>
+            </Show>
+            <div class={styles.layoutBoard}>
+              <Board id={store.getRootId()} />
+            </div>
+          </div>
         </UIStateContext.Provider>
       </StoreContext.Provider>
     </div>
