@@ -34,7 +34,7 @@ const hasChild = (id: number, maybeChild: number, childrenHash: { [key: number]:
     if (head === maybeChild) return true;
 
     const children = childrenHash[head]
-    
+
     if (!children) continue
 
     for (let i = 0; i < children.length; i++) {
@@ -67,17 +67,23 @@ export class InMemoryStore implements Store {
     const rawStored = localStorage.getItem('tasks')
 
     if (rawStored) {
-      const data = JSON.parse(rawStored)
-
-      this.tasks = mapHash(data.tasks, taskMethods.deserialize)
-      this.tasksSignals = mapHash(this.tasks, task => {
-        const [get, set] = createSignal(task)
-        return { get, set }
-      })
-      this.children = data.children
-      this.rootId = data.rootId
-      this.incId = data.incId
+      this.updateFromJSON(rawStored)
     }
+  }
+
+  updateFromJSON(rawStored: string): void {
+    const data = JSON.parse(rawStored)
+
+    this.tasks = mapHash(data.tasks, taskMethods.deserialize)
+    this.tasksSignals = mapHash(this.tasks, task => {
+      const [get, set] = createSignal(task)
+      return { get, set }
+    })
+    this.children = data.children
+    this.rootId = data.rootId
+    this.incId = data.incId
+    
+    this.trigger()
   }
 
   save() {
@@ -210,7 +216,7 @@ export class InMemoryStore implements Store {
 
     this.setTask({ ...task, isDone })
   }
-  
+
   setTitle(id: number, title: string): void {
     const task = this.tasks[id]
 

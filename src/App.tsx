@@ -6,6 +6,7 @@ import { InMemoryStore } from './storage/InMemoryStore';
 import { UIState, UIStateContext } from './storage/UIState';
 import { TaskFull } from './components/TaskFull';
 import { Board } from './components/Board';
+import { GlobalControls } from './components/GlobalControls';
 
 const App: Component = () => {
   const store = new InMemoryStore(1)
@@ -23,6 +24,7 @@ const App: Component = () => {
             <div class={styles.layoutBoard}>
               <Board id={store.getRootId()} />
             </div>
+            <GlobalControls/>
           </div>
         </UIStateContext.Provider>
       </StoreContext.Provider>
