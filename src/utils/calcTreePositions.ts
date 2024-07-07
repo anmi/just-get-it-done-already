@@ -271,7 +271,7 @@ export function calcTreePositions(rootId: number, relations: Relation[], shiftDe
   while (queue.length) {
     const head = queue.shift()!;
     elementsList.push(head);
-    const x = depthPositions[head] * 120 + 20;
+    const x = depthPositions[head] * 160 + 20;
     const y = breadthPositions[head] * 50 + 20;
     maxY = Math.max(y, maxY);
     maxX = Math.max(x, maxX);

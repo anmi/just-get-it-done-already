@@ -1,6 +1,6 @@
 import { For, createMemo, createSignal } from "solid-js"
 import { useStore } from "../storage/StoreContext"
-import { calcTreePositions } from "../utils/calcTreePositions"
+import { calcTreePositions, isRedundant } from "../utils/calcTreePositions"
 import css from './Board.module.css'
 import { TaskBoardItem } from "./TaskBoardItem"
 import { Spline } from "./Canvas/Spline"
@@ -48,7 +48,7 @@ export const Board = (props: BoardProps) => {
             
           }}
           removeVisible={false}
-          muted={false}
+          muted={isRedundant(positions().redundantHash, rel)}
         />
       }}
     </For>

@@ -53,7 +53,7 @@ export const Spline: Component<SplineProps> = (props) => {
         width={Math.abs(props.from.x - props.to.x) + 2 * GAP}
         height={Math.abs(props.from.y - props.to.y) + 2 * GAP}
         stroke="#777"
-        opacity={props.muted ? '40%' : '100%'}
+        opacity={props.muted ? '30%' : '100%'}
         stroke-width={1}
         class={classes(props.removeVisible && "Spline__path_highlighted")}
       >
