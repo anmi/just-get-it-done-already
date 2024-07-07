@@ -1,3 +1,4 @@
+import { createMemo } from "solid-js";
 import { useStore } from "../storage/StoreContext";
 import { useUIState } from "../storage/UIState";
 import styles from './TaskListItem.module.css'
@@ -10,7 +11,9 @@ interface TaskListItemProps {
 export const TaskListItem = (props: TaskListItemProps) => {
   const store = useStore()
   const uistate = useUIState()
-  const task = store.getTask(props.id)
+  const task = createMemo(() => 
+    store.getTask(props.id)()
+  )
 
   return <div class={styles.taskListItem}>
     <input type="checkbox" checked={task().isDone} onChange={(e) => {

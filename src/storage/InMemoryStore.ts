@@ -69,14 +69,14 @@ export class InMemoryStore implements Store {
       this.tasks = mapHash(data.tasks, taskMethods.deserialize)
       this.tasksSignals = mapHash(this.tasks, task => {
         const [get, set] = createSignal(task)
-        return {get, set}
+        return { get, set }
       })
       this.children = data.children
       this.rootId = data.rootId
       this.incId = data.incId
     }
   }
-  
+
   save() {
     localStorage.setItem('tasks',
       JSON.stringify({
@@ -90,9 +90,14 @@ export class InMemoryStore implements Store {
 
   trigger() {
     this.save()
-    for (let i = 0; i < this.onChange.length; i++) {
-      const fn = this.onChange[i]
-      fn()
+    const slice = this.onChange.slice(0)
+    for (let i = 0; i < slice.length; i++) {
+      const fn = slice[i]
+
+      if (this.onChange.find(f => f === fn)) {
+
+        fn()
+      }
     }
   }
 
@@ -115,16 +120,16 @@ export class InMemoryStore implements Store {
   getRootId() {
     return this.rootId
   }
-  
+
   setTask(task: Task) {
     this.tasks[task.id] = task
     if (!this.tasksSignals[task.id]) {
       const [get, set] = createSignal<Task>(task)
-      this.tasksSignals[task.id] = {get, set}
+      this.tasksSignals[task.id] = { get, set }
     }
-    
+
     this.tasksSignals[task.id].set(task)
-    
+
     this.trigger()
   }
 
@@ -167,7 +172,7 @@ export class InMemoryStore implements Store {
 
       return f
     }
-    
+
     return this.tasksSignals[id].get
   }
 
@@ -199,8 +204,8 @@ export class InMemoryStore implements Store {
 
   setDone(id: number, isDone: boolean) {
     const task = this.tasks[id]
-    
-    this.setTask({...task, isDone})
+
+    this.setTask({ ...task, isDone })
   }
 
   setDescription(id: number, description: string): void {
