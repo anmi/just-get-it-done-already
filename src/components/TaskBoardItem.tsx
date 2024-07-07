@@ -1,6 +1,7 @@
-import { Show, createEffect, createMemo } from "solid-js"
+import { createMemo } from "solid-js"
 import { useStore } from "../storage/StoreContext"
 import { useUIState } from "../storage/UIState"
+import styles from './TaskBoardItem.module.css'
 
 interface TaskBoardItemProps {
   id: number
@@ -36,8 +37,9 @@ export const TaskBoardItem = (props: TaskBoardItemProps) => {
         }
       }}
       style={{
-        "text-decoration": task().isDone ? 'line-through' : ''
+        "text-decoration": task().isDone ? 'line-through' : '',
       }}
+      class={task().id === uistate.openedTask() ? styles.selected : undefined}
     >
       {task().title}
     </a>
