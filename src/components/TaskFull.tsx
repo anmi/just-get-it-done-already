@@ -24,7 +24,24 @@ export const TaskFull = (props: TaskFullProps) => {
         store.setDescription(props.id, value)
       }} />
     </div>
-    <TaskList parentId={props.id} />
-    <CreateTask parentId={props.id} />
+    <div
+      onDrop={e => {
+        const dataTransfer = e.dataTransfer
+        if (!dataTransfer) return
+
+        const data = JSON.parse(dataTransfer.getData('application/json'))
+
+        if (data.type === 'task') {
+          store.link(data.id, props.id)
+        }
+      }}
+      onDragOver={e => {
+        e.preventDefault()
+        return false
+      }}
+    >
+      <TaskList parentId={props.id} />
+      <CreateTask parentId={props.id} />
+    </div>
   </div>
 }

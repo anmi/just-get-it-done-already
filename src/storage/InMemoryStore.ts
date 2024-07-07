@@ -24,7 +24,8 @@ const hasChild = (id: number, maybeChild: number, childrenHash: { [key: number]:
   const visited: { [key: string]: true } = {}
 
   while (queue.length > 0) {
-    const head = queue.unshift();
+    const head = queue.shift();
+    if (!head) continue
     if (visited[head]) {
       continue
     }
@@ -33,6 +34,8 @@ const hasChild = (id: number, maybeChild: number, childrenHash: { [key: number]:
     if (head === maybeChild) return true;
 
     const children = childrenHash[head]
+    
+    if (!children) continue
 
     for (let i = 0; i < children.length; i++) {
       const child = children[i]
@@ -189,7 +192,7 @@ export class InMemoryStore implements Store {
     if (id == parentId) {
       return;
     }
-    const children = this.children[parentId]
+    const children = this.children[parentId] || []
     if (children.findIndex(p => p === id) != -1) {
       return;
     }

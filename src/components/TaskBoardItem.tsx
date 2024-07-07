@@ -12,7 +12,7 @@ export const TaskBoardItem = (props: TaskBoardItemProps) => {
   const store = useStore()
   const uistate = useUIState()
   const task = createMemo(() => store.getTask(props.id)())
-  
+
   return <div style={{
     position: 'absolute',
     left: `${props.left}px`,
@@ -20,15 +20,26 @@ export const TaskBoardItem = (props: TaskBoardItemProps) => {
     transition: "left 300ms, top 300ms"
   }}
   >
-    <a href="#" onClick={e => {
-      e.preventDefault()
-      uistate.setOpenedTask(props.id)
-    }}
+    <a href="#"
+      onClick={e => {
+        e.preventDefault()
+        uistate.setOpenedTask(props.id)
+      }}
+      onDragStart={e => {
+        const dataTransfer = e.dataTransfer
+        if (dataTransfer) {
+          dataTransfer.effectAllowed = "move"
+          dataTransfer.setData('application/json', JSON.stringify({
+            type: 'task',
+            id: props.id
+          }))
+        }
+      }}
       style={{
         "text-decoration": task().isDone ? 'line-through' : ''
       }}
     >
-    {task().title}
+      {task().title}
     </a>
   </div>
 }

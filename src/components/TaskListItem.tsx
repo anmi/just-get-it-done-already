@@ -11,7 +11,7 @@ interface TaskListItemProps {
 export const TaskListItem = (props: TaskListItemProps) => {
   const store = useStore()
   const uistate = useUIState()
-  const task = createMemo(() => 
+  const task = createMemo(() =>
     store.getTask(props.id)()
   )
 
