@@ -62,5 +62,11 @@ export const TaskFull = (props: TaskFullProps) => {
       <TaskList parentId={props.id} />
       <CreateTask parentId={props.id} />
     </div>
+    <div>
+      <div>Task result:</div>
+      <RichEdit value={task().result} onChange={value => {
+        store.setResult(props.id, value)
+      }} />
+    </div>
   </div>
 }

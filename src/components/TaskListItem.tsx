@@ -1,7 +1,8 @@
-import { createMemo } from "solid-js";
+import { createMemo, Show } from "solid-js";
 import { useStore } from "../storage/StoreContext";
 import { useUIState } from "../storage/UIState";
 import styles from './TaskListItem.module.css'
+import { MarkdownPreview } from "./MarkdownPreview";
 
 interface TaskListItemProps {
   parentId: number;
@@ -29,5 +30,8 @@ export const TaskListItem = (props: TaskListItemProps) => {
     <button onClick={() => {
       store.unlink(props.id, props.parentId)
     }}>X</button>
+    <Show when={task().result !== ''}>
+      <MarkdownPreview value={task().result}/>
+    </Show>
   </div>
 }

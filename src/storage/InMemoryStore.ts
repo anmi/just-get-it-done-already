@@ -229,6 +229,15 @@ export class InMemoryStore implements Store {
     })
   }
 
+  setResult(id: number, result: string): void {
+    const task = this.tasks[id]
+
+    this.setTask({
+      ...task,
+      result
+    })
+  }
+
   getTree(rootId: number, showCompleted: boolean): Accessor<{ relations: Relation[]; }> {
     const [rels, setRels] = createSignal<{ relations: Relation[] }>({ relations: [] })
 
