@@ -210,17 +210,23 @@ export class InMemoryStore implements Store {
 
     this.setTask({ ...task, isDone })
   }
+  
+  setTitle(id: number, title: string): void {
+    const task = this.tasks[id]
+
+    this.setTask({
+      ...task,
+      title
+    })
+  }
 
   setDescription(id: number, description: string): void {
     const task = this.tasks[id]
 
-    if (task) {
-      this.tasks[id] = {
-        ...task,
-        description
-      }
-      this.trigger()
-    }
+    this.setTask({
+      ...task,
+      description
+    })
   }
 
   getTree(rootId: number, showCompleted: boolean): Accessor<{ relations: Relation[]; }> {

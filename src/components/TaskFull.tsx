@@ -4,6 +4,7 @@ import styles from './TaskFull.module.css'
 import { RichEdit } from "./RichEdit"
 import { TaskList } from "./TaskList"
 import { CreateTask } from "./CreateTask"
+import { TitleEditable } from "./TItleEditable"
 
 interface TaskFullProps {
   id: number
@@ -15,10 +16,12 @@ export const TaskFull = (props: TaskFullProps) => {
   const task = createMemo(() => store.getTask(props.id)())
 
   return <div class={styles.cont}>
-    <input type="checkbox" checked={task().isDone} onChange={(e) => {
-      store.setDone(props.id, e.currentTarget.checked)
-    }} />
-    {task().title}
+    <div style={{ display: 'flex', "flex-direction": 'row'}}>
+      <input type="checkbox" checked={task().isDone} onChange={(e) => {
+        store.setDone(props.id, e.currentTarget.checked)
+      }} />
+      <TitleEditable id={props.id} />
+    </div>
     <div>
       <RichEdit value={task().description} onChange={value => {
         store.setDescription(props.id, value)

@@ -14,6 +14,7 @@ export interface Store {
   unlink(id: number, parentId: number): void
   link(id: number, parentId: number): void
   setDone(id: number, isDone: boolean): void
+  setTitle(id: number, title: string): void
   setDescription(id: number, description: string): void
   getTree(rootId: number, showCompleted: boolean): Accessor<{ relations: Relation[] }>
 }

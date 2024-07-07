@@ -23,7 +23,7 @@ export const TaskListItem = (props: TaskListItemProps) => {
       e.preventDefault()
       uistate.setOpenedTask(props.id)
     }}>
-      {task().title}
+      {task().title === '' ? 'Empty' : task().title}
     </a>
     {' '}
     <button onClick={() => {
