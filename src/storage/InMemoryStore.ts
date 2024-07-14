@@ -46,6 +46,38 @@ const hasChild = (id: number, maybeChild: number, childrenHash: { [key: number]:
   return false
 }
 
+function isSubTreeDelayed(store: InMemoryStore, taskId: number) {
+  const task = store.tasks[taskId]
+  const children = store.children[taskId] || []
+
+  let unfinishedChildren: number[] = []
+  for (let i = 0; i < children.length; i++) {
+    const child = children[i]
+    const subtask = store.tasks[child]
+    if (subtask.isDone == false) {
+      unfinishedChildren.push(child)
+    }
+  }
+  
+  if (unfinishedChildren.length == 0) {
+    if (!task.postponedUntil) {
+      return false
+    } else {
+      return task.postponedUntil > new Date
+    }
+  }
+  
+  for (let i = 0; i < unfinishedChildren.length; i++) {
+    const child = unfinishedChildren[i]
+    
+    if (!isSubTreeDelayed(store, child)) {
+      return false
+    }
+  }
+  
+  return true
+}
+
 export class InMemoryStore implements Store {
   rootId: number
   tasks: {
@@ -279,8 +311,13 @@ export class InMemoryStore implements Store {
     })
   }
 
-  getTree(rootId: number, showCompleted: boolean): Accessor<{ relations: Relation[]; unlocked: number[]; }> {
-    const [rels, setRels] = createSignal<{ relations: Relation[], unlocked: number[] }>({ relations: [], unlocked: [] })
+  getTree(rootId: number, showCompleted: boolean): Accessor<{
+    relations: Relation[]; unlocked: number[];
+    updatedTime: Date;
+  }> {
+    const [rels, setRels] = createSignal<{
+      relations: Relation[], unlocked: number[], updatedTime: Date
+    }>({ relations: [], unlocked: [], updatedTime: new Date() })
 
     const upd = () => {
       const queue = [{ id: rootId, priority: 2 }]
@@ -291,6 +328,7 @@ export class InMemoryStore implements Store {
       const result: Relation[] = []
       const leaves: number[] = []
       const leavesHash: { [key: number]: boolean } = {}
+      // debugger
 
       while (queue.length > 0) {
         const current = queue.shift()
@@ -333,19 +371,37 @@ export class InMemoryStore implements Store {
             })
             
             if (!isDone) {
-              isHighPriority = false
+              if (!isSubTreeDelayed(this, child)) {
+                isHighPriority = false
+              }
             }
           }
         }
       }
       const unlocked = []
+      let updateOn: Date | null = null
       for (let i = 0; i < leaves.length; i++) {
         const leaf = leaves[i]
-        if (visited[leaf] === 2) {
-          unlocked.push(leaf)
+        if (visited[leaf] !== 2) continue
+        const task = this.tasks[leaf]
+        if (task && task.postponedUntil && task.postponedUntil > new Date()) {
+          if (!updateOn) {
+            updateOn = task.postponedUntil
+          } else {
+            updateOn = new Date(Math.min(task.postponedUntil.valueOf(), updateOn.valueOf()))
+          }
+          continue
         }
+        unlocked.push(leaf)
       }
-      setRels({ relations: result, unlocked })
+      
+      if (updateOn) {
+        setTimeout(() => {
+          upd()
+        }, (updateOn.valueOf() - new Date().valueOf()))
+      }
+      
+      setRels({ relations: result, unlocked, updatedTime: new Date() })
     }
 
     upd()
@@ -353,5 +409,13 @@ export class InMemoryStore implements Store {
 
 
     return rels
+  }
+  
+  postpone(id: number, until: Date | null): void {
+    const task = this.tasks[id]
+    this.setTask({
+      ...task,
+      postponedUntil: until
+    })
   }
 }

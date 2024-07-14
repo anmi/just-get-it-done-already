@@ -1,7 +1,8 @@
-import { createMemo } from "solid-js"
+import { createMemo, Show } from "solid-js"
 import { useStore } from "../storage/StoreContext"
 import { useUIState } from "../storage/UIState"
 import styles from './TaskBoardItem.module.css'
+import { PostponeCountdown } from "./PostponeCountdown"
 
 interface TaskBoardItemProps {
   id: number
@@ -44,5 +45,8 @@ export const TaskBoardItem = (props: TaskBoardItemProps) => {
     >
       {task().title}
     </a>
+    <Show when={task().postponedUntil}>
+      <PostponeCountdown until={task().postponedUntil!} />
+    </Show>
   </div>
 }

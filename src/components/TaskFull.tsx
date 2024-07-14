@@ -74,5 +74,13 @@ export const TaskFull = (props: TaskFullProps) => {
       }}/>
       Priority list
     </label>
+    <div>
+      <button onClick={() => {
+        store.postpone(props.id, new Date(new Date().valueOf() + 1000 * 60 * 5))
+      }}>Postpone 5 min</button>
+      <button onClick={() => {
+        store.postpone(props.id, new Date(new Date().valueOf() + 1000 * 5))
+      }}>Postpone 5 secs</button>
+    </div>
   </div>
 }
