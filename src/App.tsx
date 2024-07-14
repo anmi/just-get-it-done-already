@@ -22,7 +22,7 @@ const App: Component = () => {
               </div>
             </Show>
             <div class={styles.layoutBoard}>
-              <Board id={store.getRootId()} />
+              <Board id={uistate.goalTask() || store.getRootId()} />
             </div>
             <GlobalControls/>
           </div>

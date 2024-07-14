@@ -82,5 +82,10 @@ export const TaskFull = (props: TaskFullProps) => {
         store.postpone(props.id, new Date(new Date().valueOf() + 1000 * 5))
       }}>Postpone 5 secs</button>
     </div>
+    <button
+      onClick={() => {
+        uiState.setGoalTask(props.id)
+      }}
+    >Set as goal</button>
   </div>
 }
