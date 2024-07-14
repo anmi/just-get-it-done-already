@@ -1,0 +1,51 @@
+:root {
+    --pageBackground: #fff;
+    --linkColor: #1f69ad;
+    --text: #000;
+    --inputBackground: #fff;
+    --inputBorder: #777;
+    --inputText: #000;
+    --buttonBorder: #777;
+    --buttonBackground: #fff;
+    --buttonText: #333
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --pageBackground: #000;
+        --linkColor: #329afa;
+        --text: #fff;
+        --background: #000;
+        --inputBackground: #000;
+        --inputBorder: #333;
+        --inputText: #fff;
+        --buttonBorder: #777;
+        --buttonBackground: #103557;
+        --buttonText: #eee
+    }
+
+    /* width */
+    ::-webkit-scrollbar {
+        width: 10px;
+        height: 10px;
+    }
+
+    /* Track */
+    ::-webkit-scrollbar-track {
+        background: #222;
+    }
+
+    /* Handle */
+    ::-webkit-scrollbar-thumb {
+        background: #444;
+    }
+
+    /* Handle on hover */
+    ::-webkit-scrollbar-thumb:hover {
+        background: #bbb;
+    }
+    
+    ::-webkit-scrollbar-corner {
+        background: #000;
+    }
+}

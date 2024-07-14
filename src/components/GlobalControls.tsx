@@ -1,12 +1,15 @@
 import { useStore } from "../storage/StoreContext"
+import { Button } from "./Button"
 import styles from './GlobalControls.module.css'
+import { HStack } from "./HStack"
 
 export const GlobalControls = () => {
   const store = useStore()
 
   return <div class={styles.cont}>
     <div class={styles.controls}>
-      <button
+      <HStack>
+      <Button
         onClick={e => {
           const fileName = 'tasks.json'
           const content = localStorage.getItem('tasks')
@@ -18,8 +21,8 @@ export const GlobalControls = () => {
           a.download = fileName;
           a.click();
         }}
-      >Save...</button>
-      <button onClick={e => {
+      >Save...</Button>
+      <Button onClick={e => {
         const filepick = document.createElement('input')
         filepick.setAttribute('type', 'file')
         filepick.click()
@@ -41,7 +44,8 @@ export const GlobalControls = () => {
           
           reader.readAsText(file)
         })
-      }}>Load...</button>
+      }}>Load...</Button>
+      </HStack>
     </div>
   </div>
 }

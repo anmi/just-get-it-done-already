@@ -1,6 +1,8 @@
 import { createEffect, createMemo, createSignal, Show } from "solid-js"
 import { useStore } from "../storage/StoreContext"
 import styles from './TitleEditable.module.css'
+import { Input } from "./Input"
+import { Button } from "./Button"
 
 interface TitleEditableProps {
   id: number
@@ -21,7 +23,7 @@ export const TitleEditable = (props: TitleEditableProps) => {
   })
 
   return <span class={styles.container}>
-    <input
+    <Input
       class={styles.input}
       value={title()}
       onInput={e => {
@@ -36,10 +38,14 @@ export const TitleEditable = (props: TitleEditableProps) => {
       }}
     />
     <Show when={hasChanges()}>
-      <button onClick={(e) => {
+      <Button onClick={(e) => {
         setHasChanges(false)
         store.setTitle(props.id, title())
-      }}>Save</button>
+      }}>Save</Button>
+      <Button onClick={(e) => {
+        setHasChanges(false)
+        setTitle(originalTitle())
+      }}>Undo</Button>
     </Show>
   </span>
 }

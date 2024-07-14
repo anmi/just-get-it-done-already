@@ -7,6 +7,7 @@ import { UIState, UIStateContext } from './storage/UIState';
 import { TaskFull } from './components/TaskFull';
 import { Board } from './components/Board';
 import { GlobalControls } from './components/GlobalControls';
+import './colors.css';
 
 const App: Component = () => {
   const store = new InMemoryStore(1)

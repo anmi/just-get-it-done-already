@@ -8,3 +8,7 @@
     min-width: 50%;
     /* flex-grow: 2; */
 }
+
+.textarea {
+    width: 100%;
+}

@@ -3,6 +3,8 @@ import { useStore } from "../storage/StoreContext";
 import { useUIState } from "../storage/UIState";
 import styles from './TaskListItem.module.css'
 import { MarkdownPreview } from "./MarkdownPreview";
+import { Button } from "./Button";
+import { HStack } from "./HStack";
 
 interface TaskListItemProps {
   parentId: number;
@@ -34,31 +36,33 @@ export const TaskListItem = (props: TaskListItemProps) => {
       return false
     }}
   >
-    <input type="checkbox" checked={task().isDone} onChange={(e) => {
-      store.setDone(props.id, e.currentTarget.checked)
-    }} />
-    <a href="#"
-      onClick={e => {
-        e.preventDefault()
-        uistate.setOpenedTask(props.id)
-      }}
-      onDragStart={e => {
-        const dataTransfer = e.dataTransfer
-        if (dataTransfer) {
-          dataTransfer.effectAllowed = "move"
-          dataTransfer.setData('application/json', JSON.stringify({
-            type: 'task',
-            id: props.id
-          }))
-        }
-      }}
-    >
-      {task().title === '' ? 'Empty' : task().title}
-    </a>
-    {' '}
-    <button onClick={() => {
-      store.unlink(props.id, props.parentId)
-    }}>X</button>
+    <HStack>
+      <input type="checkbox" checked={task().isDone} onChange={(e) => {
+        store.setDone(props.id, e.currentTarget.checked)
+      }} />
+      <a href="#"
+        onClick={e => {
+          e.preventDefault()
+          uistate.setOpenedTask(props.id)
+        }}
+        onDragStart={e => {
+          const dataTransfer = e.dataTransfer
+          if (dataTransfer) {
+            dataTransfer.effectAllowed = "move"
+            dataTransfer.setData('application/json', JSON.stringify({
+              type: 'task',
+              id: props.id
+            }))
+          }
+        }}
+      >
+        {task().title === '' ? 'Empty' : task().title}
+      </a>
+      {' '}
+      <Button size="s" onClick={() => {
+        store.unlink(props.id, props.parentId)
+      }}>X</Button>
+    </HStack>
     <Show when={task().result !== ''}>
       <MarkdownPreview value={task().result} />
     </Show>

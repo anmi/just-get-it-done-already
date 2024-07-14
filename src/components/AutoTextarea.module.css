@@ -1,0 +1,9 @@
+.AutoTextarea {
+    padding: .375rem .75rem;
+    font-size: 1rem;
+    border-radius: .25rem;
+    background: var(--inputBackground);
+    color: var(--inputText);
+    border: 1px solid var(--inputBorder);
+    outline: none;
+}
