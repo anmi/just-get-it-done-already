@@ -1,3 +1,29 @@
+# Just get it done already
+
+This is a task tracker with diamond dependency tree support!
+
+![Dependency tree](manual/tree.jpg)
+
+Try it! [https://anmi.github.io/just-get-it-done-already/](https://anmi.github.io/just-get-it-done-already/)
+
+To add existing task to opened task, just drag'n' drop task name to opened task list!
+
+## Problem statement
+
+Simple TODO lists are acually working fine, but it's not easy to plan big features
+and refactor dependencies, braking down into subtasks and not beign overwhelmed by long list
+of tasks.
+
+I was inspired by RPG games with ability trees where you can always find a shortest path to your goal.
+And easily track what should be your next task to get to your goal.
+
+It's more a focus control tracker than time management, but you can also postpone tasks to focus
+on something you are not blocked.
+
+## Security concerns
+
+Everything is stored in localStorage, but you can create a backup using *Save...* button.
+
 ## Usage
 
 Those templates dependencies are maintained via [pnpm](https://pnpm.io) via `pnpm up -Lri`.
@@ -32,3 +58,5 @@ Your app is ready to be deployed!
 ## Deployment
 
 You can deploy the `dist` folder to any static host provider (netlify, surge, now, etc.)
+
+To deploy on github pages run `npm run build-deploy`
