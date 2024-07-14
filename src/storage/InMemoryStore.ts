@@ -201,7 +201,11 @@ export class InMemoryStore implements Store {
 
   getTask(id: number) {
     if (id === this.getRootId()) {
-      const [f] = createSignal<Task>({
+      if (this.tasksSignals[id]) {
+        return this.tasksSignals[id].get
+      }
+
+      const task: Task = {
         id,
         title: 'Root',
         description: '',
@@ -209,7 +213,9 @@ export class InMemoryStore implements Store {
         isDone: false,
         postponedUntil: null,
         isPriorityList: false,
-      })
+      }
+      this.setTask(task)
+      const [f] = createSignal<Task>(task)
 
       return f
     }
