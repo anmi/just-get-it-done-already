@@ -5,6 +5,10 @@ export class UIState {
   _setOpenedTask: Setter<number | null>
   goalTask: Accessor<number | null>
   _setGoalTask: Setter<number | null>
+  shift: Accessor<boolean>
+  _setShift: Setter<boolean>
+  flipHorizontally: Accessor<boolean>
+  _setFlipHorizontally: Setter<boolean>
   
   constructor() {
     const [openedTask, setOpenedTask] = createSignal<number | null>(null)
@@ -13,6 +17,12 @@ export class UIState {
     const [goalTask, setGoalTask] = createSignal<number | null>(null)
     this._setGoalTask = setGoalTask
     this.goalTask = goalTask
+    const [shift, setShift] = createSignal<boolean>(false)
+    this.shift = shift
+    this._setShift = setShift
+    const [flipHorizontally, setFlipHorizontally] = createSignal<boolean>(false)
+    this.flipHorizontally = flipHorizontally
+    this._setFlipHorizontally = setFlipHorizontally
     
     const rawStored = localStorage.getItem('uistate')
     
@@ -21,6 +31,8 @@ export class UIState {
       
       this._setOpenedTask(data.openedTask)
       this._setGoalTask(data.goalTask)
+      this._setShift(data.shift)
+      this._setFlipHorizontally(data.flipHorizontally)
     }
   }
   
@@ -28,6 +40,8 @@ export class UIState {
     localStorage.setItem('uistate', JSON.stringify({
       openedTask: this.openedTask(),
       goalTask: this.goalTask(),
+      shift: this.shift(),
+      flipHorizontally: this.flipHorizontally()
     }))
   }
   
@@ -38,6 +52,16 @@ export class UIState {
 
   setOpenedTask(value: number | null) {
     this._setOpenedTask(value)
+    this.saveState()
+  }
+  
+  setShift(value: boolean) {
+    this._setShift(value)
+    this.saveState()
+  }
+  
+  setFlipHorizontally(value: boolean) {
+    this._setFlipHorizontally(value)
     this.saveState()
   }
 }

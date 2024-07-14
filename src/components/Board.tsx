@@ -15,14 +15,13 @@ export const Board = (props: BoardProps) => {
   const uistate = useUIState()
   
   const [showCompleted, setShowCompleted] = createSignal(false)
-  const [shift, setShift] = createSignal(false)
-  const [flipDepth, setFlipDepth] = createSignal(false)
+  // const [flipDepth, setFlipDepth] = createSignal(false)
   const rels = createMemo(() => store.getTree(props.id, showCompleted())())
 
   const positions = createMemo(() => {
     return calcTreePositions(props.id, rels().relations, {
-      shiftDepths: shift(),
-      flipDepth: flipDepth(),
+      shiftDepths: uistate.shift(),
+      flipDepth: uistate.flipHorizontally(),
       unlocked: rels().unlocked
     })
   })
@@ -36,14 +35,14 @@ export const Board = (props: BoardProps) => {
     </label>
     <label >
       <input type="checkbox" onChange={e => {
-        setShift(e.currentTarget.checked)
-      }} checked={shift()}/>
+        uistate.setShift(e.currentTarget.checked)
+      }} checked={uistate.shift()}/>
         shift
     </label>
     <label >
       <input type="checkbox" onChange={e => {
-        setFlipDepth(e.currentTarget.checked)
-      }} checked={flipDepth()}/>
+        uistate.setFlipHorizontally(e.currentTarget.checked)
+      }} checked={uistate.flipHorizontally()}/>
         flip horizontally
     </label>
     <Show when={uistate.goalTask() != null && store.getTask(uistate.goalTask()!)()}>
