@@ -38,6 +38,22 @@ export const TaskBoardItem = (props: TaskBoardItemProps) => {
           }))
         }
       }}
+      onDrop={(e) => {
+        const dataTransfer = e.dataTransfer
+        if (!dataTransfer) return
+
+        const raw = dataTransfer.getData('application/json')
+        const data = JSON.parse(raw)
+
+        if (data.type === 'task') {
+          store.link(data.id, props.id)
+          e.stopPropagation()
+        }
+      }}
+      onDragOver={e => {
+        e.preventDefault()
+        return false
+      }}
       style={{
         "text-decoration": task().isDone ? 'line-through' : '',
       }}
