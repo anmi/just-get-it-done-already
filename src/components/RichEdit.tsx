@@ -26,9 +26,11 @@ export const RichEdit = (props: RichEditProps) => {
 
   return <div>
     <Show when={!isEdit()}>
-      <Button size="s" onClick={() => {
-        setIsEdit(true)
-      }}>{props.editLabel ?? 'Edit'}</Button>
+      <HStack justifyContent='end'>
+        <Button size="s" onClick={() => {
+          setIsEdit(true)
+        }}>{props.editLabel ?? 'Edit'}</Button>
+      </HStack>
     </Show>
     <VStack>
     <Show when={isEdit()}>
