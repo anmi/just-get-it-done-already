@@ -5,6 +5,7 @@ import styles from './TaskListItem.module.css'
 import { MarkdownPreview } from "./MarkdownPreview";
 import { Button } from "./Button";
 import { HStack } from "./HStack";
+import { Checkbox } from "./Checkbox";
 
 interface TaskListItemProps {
   parentId: number;
@@ -37,9 +38,10 @@ export const TaskListItem = (props: TaskListItemProps) => {
     }}
   >
     <HStack>
-      <input type="checkbox" checked={task().isDone} onChange={(e) => {
-        store.setDone(props.id, e.currentTarget.checked)
-      }} />
+      <Checkbox
+        value={task().isDone}
+        onChange={(value) => store.setDone(props.id, value)}
+      />
       <a href="#"
         onClick={e => {
           e.preventDefault()

@@ -10,6 +10,7 @@ import { HStack } from "./HStack"
 import { Button } from "./Button"
 import { VStack } from "./VStack"
 import { PostponeCountdown } from "./PostponeCountdown"
+import { Checkbox } from "./Checkbox"
 
 interface TaskFullProps {
   id: number
@@ -35,9 +36,10 @@ export const TaskFull = (props: TaskFullProps) => {
   return <div class={styles.cont}>
     <VStack gap={16}>
       <HStack>
-        <input type="checkbox" checked={task().isDone} onChange={(e) => {
-          store.setDone(props.id, e.currentTarget.checked)
-        }} />
+        <Checkbox
+          value={task().isDone}
+          onChange={isDone => store.setDone(props.id, isDone)}
+        />
         <TitleEditable id={props.id} />
         <Button onClick={e => {
           uiState.setOpenedTask(null)
@@ -77,11 +79,16 @@ export const TaskFull = (props: TaskFullProps) => {
           editLabel="Add/Edit result"
         />
       </div>
-      <div style={{height: '16px'}}></div>
-      <label>
-        <input type="checkbox" checked={task().isPriorityList} onChange={(e) => {
-          store.setIsPriorityList(props.id, e.currentTarget.checked)
-        }} />
+      <div style={{ height: '16px' }}></div>
+      <label style={{
+        display: 'flex',
+        "flex-direction": 'row',
+        gap: '8px',
+      }}>
+        <Checkbox
+          value={task().isPriorityList}
+          onChange={isPriority => store.setIsPriorityList(props.id, isPriority)}
+        />
         Priority list
       </label>
       <HStack>

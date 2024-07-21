@@ -7,6 +7,8 @@ import { Spline } from "./Canvas/Spline"
 import { useUIState } from "../storage/UIState"
 import { Button } from "./Button"
 import { HStack } from "./HStack"
+import { Checkbox } from "./Checkbox"
+import { CheckboxLabel } from "./CheckboxLabel"
 
 interface BoardProps {
   id: number
@@ -48,24 +50,22 @@ export const Board = (props: BoardProps) => {
           }}
         >Remove</Button>
       </Show>
-      <label >
-        <input type="checkbox" onChange={e => {
-          setShowCompleted(e.currentTarget.checked)
-        }} checked={showCompleted()} />
+      <CheckboxLabel>
+        <Checkbox value={showCompleted()} onChange={setShowCompleted}/>
         show completed
-      </label>
-      <label >
-        <input type="checkbox" onChange={e => {
-          uistate.setShift(e.currentTarget.checked)
-        }} checked={uistate.shift()} />
+      </CheckboxLabel>
+      <CheckboxLabel>
+        <Checkbox value={uistate.shift()}
+          onChange={shift => uistate.setShift(shift)}
+        />
         shift
-      </label>
-      <label >
-        <input type="checkbox" onChange={e => {
-          uistate.setFlipHorizontally(e.currentTarget.checked)
-        }} checked={uistate.flipHorizontally()} />
+      </CheckboxLabel>
+      <CheckboxLabel>
+        <Checkbox value={uistate.flipHorizontally()}
+          onChange={flip => uistate.setFlipHorizontally(flip)}
+        />
         flip horizontally
-      </label>
+      </CheckboxLabel>
     </HStack>
     <div style={{
       height: `${positions().maxY}px`,
