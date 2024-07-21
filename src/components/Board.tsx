@@ -9,6 +9,7 @@ import { Button } from "./Button"
 import { HStack } from "./HStack"
 import { Checkbox } from "./Checkbox"
 import { CheckboxLabel } from "./CheckboxLabel"
+import { Collapse } from "./Collapse"
 
 interface BoardProps {
   id: number
@@ -31,41 +32,47 @@ export const Board = (props: BoardProps) => {
   })
 
   return <div class={css.container}>
-    <HStack>
+    <HStack alignItems="start">
       <Show when={uistate.goalTask() != null && store.getTask(uistate.goalTask()!)()}>
-        Goal:
-        <a href="#"
-          onClick={e => {
-            e.preventDefault()
-            uistate.setOpenedTask(props.id)
-          }}
-        >
-          {store.getTask(uistate.goalTask()!)().title}
-        </a>
-        <Button
-          size="s"
-          onClick={e => {
-            e.preventDefault()
-            uistate.setGoalTask(null)
-          }}
-        >Remove</Button>
+        <HStack>
+          Goal:
+          <a href="#"
+            onClick={e => {
+              e.preventDefault()
+              uistate.setOpenedTask(props.id)
+            }}
+          >
+            {store.getTask(uistate.goalTask()!)().title}
+          </a>
+          <Button
+            size="s"
+            onClick={e => {
+              e.preventDefault()
+              uistate.setGoalTask(null)
+            }}
+          >Remove</Button>
+        </HStack>
       </Show>
-      <CheckboxLabel>
-        <Checkbox value={showCompleted()} onChange={setShowCompleted}/>
-        show completed
-      </CheckboxLabel>
-      <CheckboxLabel>
-        <Checkbox value={uistate.shift()}
-          onChange={shift => uistate.setShift(shift)}
-        />
-        shift
-      </CheckboxLabel>
-      <CheckboxLabel>
-        <Checkbox value={uistate.flipHorizontally()}
-          onChange={flip => uistate.setFlipHorizontally(flip)}
-        />
-        flip horizontally
-      </CheckboxLabel>
+      <Collapse title="Settings">
+        <HStack>
+          <CheckboxLabel>
+            <Checkbox value={showCompleted()} onChange={setShowCompleted} />
+            show completed
+          </CheckboxLabel>
+          <CheckboxLabel>
+            <Checkbox value={uistate.shift()}
+              onChange={shift => uistate.setShift(shift)}
+            />
+            shift
+          </CheckboxLabel>
+          <CheckboxLabel>
+            <Checkbox value={uistate.flipHorizontally()}
+              onChange={flip => uistate.setFlipHorizontally(flip)}
+            />
+            flip horizontally
+          </CheckboxLabel>
+        </HStack>
+      </Collapse>
     </HStack>
     <div style={{
       height: `${positions().maxY}px`,
