@@ -11,6 +11,8 @@ import { Button } from "./Button"
 import { VStack } from "./VStack"
 import { PostponeCountdown } from "./PostponeCountdown"
 import { Checkbox } from "./Checkbox"
+import { CheckboxLabel } from "./CheckboxLabel"
+import { Collapse } from "./Collapse"
 
 interface TaskFullProps {
   id: number
@@ -80,55 +82,53 @@ export const TaskFull = (props: TaskFullProps) => {
         />
       </div>
       <div style={{ height: '16px' }}></div>
-      <label style={{
-        display: 'flex',
-        "flex-direction": 'row',
-        gap: '8px',
-      }}>
-        <Checkbox
-          value={task().isPriorityList}
-          onChange={isPriority => store.setIsPriorityList(props.id, isPriority)}
-        />
-        Priority list
-      </label>
-      <HStack>
-        <div>Postpone</div>
-        <Button size="s" onClick={() => {
-          store.postpone(props.id, new Date(new Date().valueOf() + 1000 * 60 * 5))
-        }}>5m</Button>
-        <Button size="s" onClick={() => {
-          store.postpone(props.id, new Date(new Date().valueOf() + 1000 * 60 * 10))
-        }}>10m</Button>
-        <Button size="s" onClick={() => {
-          store.postpone(props.id, new Date(new Date().valueOf() + 1000 * 60 * 30))
-        }}>30m</Button>
-        <Button size="s" onClick={() => {
-          store.postpone(props.id, new Date(new Date().valueOf() + 1000 * 60 * 60))
-        }}>1h</Button>
-        <Button size="s" onClick={() => {
-          store.postpone(props.id, new Date(new Date().valueOf() + 1000 * 60 * 60 * 2))
-        }}>2h</Button>
-        <Button size="s" onClick={() => {
-          store.postpone(props.id, new Date(new Date().valueOf() + 1000 * 60 * 60 * 4))
-        }}>4h</Button>
-        <Button size="s" onClick={() => {
-          store.postpone(props.id, new Date(new Date().valueOf() + 1000 * 60 * 60 * 24))
-        }}>day</Button>
-        <Show when={task().postponedUntil}>
+      <Collapse title="More options">
+        <CheckboxLabel>
+          <Checkbox
+            value={task().isPriorityList}
+            onChange={isPriority => store.setIsPriorityList(props.id, isPriority)}
+          />
+          Priority list
+        </CheckboxLabel>
+        <HStack>
+          <div>Postpone</div>
           <Button size="s" onClick={() => {
-            store.postpone(props.id, null)
-          }}>reset</Button>
-          <PostponeCountdown until={task().postponedUntil!} />
-        </Show>
-      </HStack>
-      <div>
-        <Button
-          size="s"
-          onClick={() => {
-            uiState.setGoalTask(props.id)
-          }}
-        >Set as goal</Button>
-      </div>
+            store.postpone(props.id, new Date(new Date().valueOf() + 1000 * 60 * 5))
+          }}>5m</Button>
+          <Button size="s" onClick={() => {
+            store.postpone(props.id, new Date(new Date().valueOf() + 1000 * 60 * 10))
+          }}>10m</Button>
+          <Button size="s" onClick={() => {
+            store.postpone(props.id, new Date(new Date().valueOf() + 1000 * 60 * 30))
+          }}>30m</Button>
+          <Button size="s" onClick={() => {
+            store.postpone(props.id, new Date(new Date().valueOf() + 1000 * 60 * 60))
+          }}>1h</Button>
+          <Button size="s" onClick={() => {
+            store.postpone(props.id, new Date(new Date().valueOf() + 1000 * 60 * 60 * 2))
+          }}>2h</Button>
+          <Button size="s" onClick={() => {
+            store.postpone(props.id, new Date(new Date().valueOf() + 1000 * 60 * 60 * 4))
+          }}>4h</Button>
+          <Button size="s" onClick={() => {
+            store.postpone(props.id, new Date(new Date().valueOf() + 1000 * 60 * 60 * 24))
+          }}>day</Button>
+          <Show when={task().postponedUntil}>
+            <Button size="s" onClick={() => {
+              store.postpone(props.id, null)
+            }}>reset</Button>
+            <PostponeCountdown until={task().postponedUntil!} />
+          </Show>
+        </HStack>
+        <div>
+          <Button
+            size="s"
+            onClick={() => {
+              uiState.setGoalTask(props.id)
+            }}
+          >Set as goal</Button>
+        </div>
+      </Collapse>
     </VStack>
   </div>
 }

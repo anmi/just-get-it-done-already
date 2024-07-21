@@ -2,12 +2,13 @@
     --pageBackground: #fff;
     --linkColor: #1f69ad;
     --text: #000;
+    --textDim: #777;
     --inputBackground: #fff;
     --inputBorder: #777;
     --inputText: #000;
     --buttonBorder: #777;
     --buttonBackground: #fff;
-    --buttonText: #333
+    --buttonText: #333;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -15,6 +16,7 @@
         --pageBackground: #000;
         --linkColor: #329afa;
         --text: #fff;
+        --textDim: #777;
         --background: #000;
         --inputBackground: #000;
         --inputBorder: #333;

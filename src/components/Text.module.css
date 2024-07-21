@@ -1,0 +1,7 @@
+.text {
+    color: var(--text);
+}
+
+.dim {
+    color: var(--textDim);
+}
