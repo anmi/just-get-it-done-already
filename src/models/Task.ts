@@ -17,10 +17,13 @@ export interface TaskDraft {
 
 export const taskMethods = {
   serialize: (task: Task) => {
-    return JSON.stringify(task)
+    return {
+      ...task,
+      postponedUntil: task.postponedUntil ? task.postponedUntil.valueOf() : null
+    }
   },
-  deserialize: (str: string) => {
-    const parsed = JSON.parse(str)
+  deserialize: (str: string | Object) => {
+    const parsed = typeof str === 'string' ? JSON.parse(str) : str
 
     return {
       ...parsed,
