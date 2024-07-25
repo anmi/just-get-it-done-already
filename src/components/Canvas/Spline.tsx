@@ -26,22 +26,35 @@ function avg(a: number, b: number) {
 const GAP = 20;
 
 interface GetPathParams {
+  before: number;
+  after: number;
   from: Point;
   to: Point;
 }
 
+function movePointX(point: Point, offset: number) {
+  return {
+    x: point.x + offset,
+    y: point.y
+  }
+}
+
 function getPath(props: GetPathParams): string {
-  const { from, to } = props;
-  const x0 = GAP;
+  // const { from, to } = props;
+  const from = movePointX(props.from, props.before)
+  const to = movePointX(props.to, -props.after)
+  const x0 = GAP
+  const sx0 = x0 + props.before;
   const y0 = GAP;
   const midy = Math.abs((from.y - to.y) / 2) + GAP;
-  const midx = Math.abs((from.x - to.x) / 2) + GAP;
+  const midx = Math.abs((from.x - to.x) / 2) + GAP + props.before;
   const xOff = Math.abs(from.x - to.x) + GAP;
+  const sxOff = xOff + props.before
   const yOff = Math.abs(from.y - to.y) + GAP;
   if (from.y < to.y) {
-    return `M${x0},${y0} C${midx},${y0} ${midx},${yOff} ${xOff},${yOff}`;
+    return `M${x0},${y0} L${sx0},${y0} C${midx},${y0} ${midx},${yOff} ${sxOff},${yOff} L${sxOff+props.after},${yOff}`;
   } else {
-    return `M${xOff},${y0} C${midx},${y0} ${midx},${yOff} ${y0},${yOff}`;
+    return `M${x0},${yOff} L${sx0},${yOff} C${midx},${yOff} ${midx},${y0} ${sxOff},${y0} L${sxOff + props.after},${y0}`
   }
 }
 
@@ -49,11 +62,17 @@ export const Spline: Component<SplineProps> = (props) => {
   const pos = createMemo(() => {
     if (props.from.x < props.to.x) {
       return {
+        after: props.muted ? 0 :
+          props.to.x - props.from.x - 200,
+        before: 0,
         from: props.from,
         to: props.to,
       }
     } else {
       return {
+        before: props.muted ? 0 :
+          props.from.x - props.to.x - 200,
+        after: 0,
         to: props.from,
         from: props.to,
       }
