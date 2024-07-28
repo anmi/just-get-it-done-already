@@ -10,6 +10,7 @@ export interface Store {
   getRootId(): number
   createTask(parentId: number, draft: TaskDraft): void
   getChildren(parentId: number): Accessor<number[]>
+  getParents(parentId: number): Accessor<number[]>
   getTask(id: number): Accessor<Task>
   unlink(id: number, parentId: number): void
   link(id: number, parentId: number, positionId?: number): void

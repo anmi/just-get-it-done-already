@@ -89,6 +89,9 @@ export class InMemoryStore implements Store {
   children: {
     [key: number]: number[]
   } = {}
+  parents: {
+    [key: number]: number[]
+  } = {}
   incId: number
   onChange: (() => void)[] = []
 
@@ -114,6 +117,22 @@ export class InMemoryStore implements Store {
     this.children = data.children
     this.rootId = data.rootId
     this.incId = data.incId
+    
+    const ids = Object.keys(this.children).map(id => parseInt(id, 10))
+    
+    for (let i = 0; i < ids.length; i++) {
+      const parentId = ids[i]
+      const children = this.children[parentId]
+      
+      for (let j = 0; j < children.length; j++) {
+        const child = children[j]
+
+        this.parents[child] ??= []
+        if (!this.parents[child].includes(parentId)) {
+          this.parents[child].push(parentId)
+        }
+      }
+    }
     
     this.trigger()
   }
@@ -182,9 +201,9 @@ export class InMemoryStore implements Store {
       ...draft
     }
 
-    this.children[parentId] = [...(this.children[parentId] || EMPTY_ARRAY), task.id]
-
     this.setTask(task)
+    
+    this.link(task.id, parentId)
 
     this.trigger()
   }
@@ -196,6 +215,16 @@ export class InMemoryStore implements Store {
       setIds(this.children[parentId] || EMPTY_ARRAY)
     })
 
+    return ids
+  }
+  
+  getParents(id: number) {
+    const parents = this.parents[id] || EMPTY_ARRAY
+    const [ids, setIds] = createSignal<number[]>(parents)
+    this.onUpdate(() => {
+      setIds(this.parents[id] || EMPTY_ARRAY)
+    })
+    
     return ids
   }
 
@@ -228,6 +257,8 @@ export class InMemoryStore implements Store {
     if (children) {
       this.children[parentId] = children.filter(c => c != id)
     }
+    this.parents[id] ??= []
+    this.parents[id] = this.parents[id].filter(c => c !== parentId)
 
     this.trigger()
   }
@@ -259,7 +290,7 @@ export class InMemoryStore implements Store {
     this.trigger()
   }
 
-  link(id: number, parentId: number, positionId: number): void {
+  link(id: number, parentId: number, positionId?: number): void {
     if (id == parentId) {
       return;
     }
@@ -276,6 +307,7 @@ export class InMemoryStore implements Store {
     }
 
     this.children[parentId] = [...children, id]
+    this.parents[id] = [...(this.parents[id] ?? []), parentId]
     this.trigger()
   }
 

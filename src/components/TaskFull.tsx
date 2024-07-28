@@ -1,4 +1,4 @@
-import { createEffect, createMemo, onCleanup, Show } from "solid-js"
+import { createMemo, onCleanup, Show } from "solid-js"
 import { useStore } from "../storage/StoreContext"
 import styles from './TaskFull.module.css'
 import { RichEdit } from "./RichEdit"
@@ -13,6 +13,7 @@ import { PostponeCountdown } from "./PostponeCountdown"
 import { Checkbox } from "./Checkbox"
 import { CheckboxLabel } from "./CheckboxLabel"
 import { Collapse } from "./Collapse"
+import { ParentList } from "./ParentList"
 
 interface TaskFullProps {
   id: number
@@ -37,6 +38,7 @@ export const TaskFull = (props: TaskFullProps) => {
 
   return <div class={styles.cont}>
     <VStack gap={16}>
+      <ParentList id={props.id}/>
       <HStack>
         <Checkbox
           value={task().isDone}
