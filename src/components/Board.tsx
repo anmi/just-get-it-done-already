@@ -20,8 +20,7 @@ export const Board = (props: BoardProps) => {
   const uistate = useUIState()
 
   const [showCompleted, setShowCompleted] = createSignal(false)
-  // const [flipDepth, setFlipDepth] = createSignal(false)
-  const rels = createMemo(() => store.getTree(props.id, showCompleted())())
+  const rels = createMemo(() => store.getTree(props.id, showCompleted(), uistate.hideBlockedSubTree())())
 
   const positions = createMemo(() => {
     return calcTreePositions(props.id, rels().relations, {
@@ -57,19 +56,25 @@ export const Board = (props: BoardProps) => {
         <HStack>
           <CheckboxLabel>
             <Checkbox value={showCompleted()} onChange={setShowCompleted} />
-            show completed
+            Show completed
           </CheckboxLabel>
           <CheckboxLabel>
             <Checkbox value={uistate.shift()}
               onChange={shift => uistate.setShift(shift)}
             />
-            shift
+            Shift
           </CheckboxLabel>
           <CheckboxLabel>
             <Checkbox value={uistate.flipHorizontally()}
               onChange={flip => uistate.setFlipHorizontally(flip)}
             />
-            flip horizontally
+            Flip horizontally
+          </CheckboxLabel>
+          <CheckboxLabel>
+            <Checkbox value={uistate.hideBlockedSubTree()}
+              onChange={flip => uistate.setHideBlockedSubtree(flip)}
+            />
+            Hide postponed subtrees
           </CheckboxLabel>
         </HStack>
       </Collapse>

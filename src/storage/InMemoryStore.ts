@@ -46,6 +46,45 @@ const hasChild = (id: number, maybeChild: number, childrenHash: { [key: number]:
   return false
 }
 
+function isEveryLeafDelayed(store: InMemoryStore, taskId: number): Date | null {
+  const task = store.tasks[taskId]
+  const children = store.children[taskId] || []
+
+  let unfinishedChildren: number[] = []
+  for (let i = 0; i < children.length; i++) {
+    const child = children[i]
+    const subtask = store.tasks[child]
+    if (!subtask.isDone) {
+      unfinishedChildren.push(child)
+    }
+  }
+  
+  if (unfinishedChildren.length == 0) {
+    if (!task.postponedUntil) {
+      return null
+    } else {
+      if (task.postponedUntil > new Date) {
+        return task.postponedUntil
+      }
+    }
+  }
+  
+  let delayed = true;
+  let postponedUntil: null | Date = null
+  for (let i = 0; i < unfinishedChildren.length; i++) {
+    const child = unfinishedChildren[i]
+    
+    const postponedUntilTask = isEveryLeafDelayed(store, child)
+    if (!postponedUntilTask) {
+      delayed = false
+    } else {
+      postponedUntil = nullableMinDate(postponedUntil, postponedUntilTask)
+    }
+  }
+
+  return delayed ? postponedUntil : null
+}
+
 function isSubTreeDelayed(store: InMemoryStore, taskId: number) {
   const task = store.tasks[taskId]
   const children = store.children[taskId] || []
@@ -76,6 +115,17 @@ function isSubTreeDelayed(store: InMemoryStore, taskId: number) {
   }
   
   return true
+}
+
+function nullableMinDate(a: Date | null, b: Date | null) {
+  if (a == null) {
+    return b
+  }
+  if (b == null) {
+    return a
+  }
+  
+  return new Date(Math.min(a.valueOf(), b.valueOf()))
 }
 
 export class InMemoryStore implements Store {
@@ -373,7 +423,7 @@ export class InMemoryStore implements Store {
     })
   }
 
-  getTree(rootId: number, showCompleted: boolean): Accessor<{
+  getTree(rootId: number, showCompleted: boolean, hideBlocked: boolean): Accessor<{
     relations: Relation[]; unlocked: number[];
     updatedTime: Date;
   }> {
@@ -390,7 +440,7 @@ export class InMemoryStore implements Store {
       const result: Relation[] = []
       const leaves: number[] = []
       const leavesHash: { [key: number]: boolean } = {}
-      // debugger
+      let updateOn: Date | null = null
 
       while (queue.length > 0) {
         const current = queue.shift()
@@ -413,6 +463,14 @@ export class InMemoryStore implements Store {
           let isHighPriority = true
           for (let i = 0; i < children.length; i++) {
             const child = children[i]
+            
+            if (hideBlocked) {
+              const until = isEveryLeafDelayed(this, child)
+              if (until) {
+                updateOn = nullableMinDate(updateOn, until)
+                continue
+              } 
+            }
 
             const task = this.tasks[child]
 
@@ -441,17 +499,12 @@ export class InMemoryStore implements Store {
         }
       }
       const unlocked = []
-      let updateOn: Date | null = null
       for (let i = 0; i < leaves.length; i++) {
         const leaf = leaves[i]
         if (visited[leaf] !== 2) continue
         const task = this.tasks[leaf]
         if (task && task.postponedUntil && task.postponedUntil > new Date()) {
-          if (!updateOn) {
-            updateOn = task.postponedUntil
-          } else {
-            updateOn = new Date(Math.min(task.postponedUntil.valueOf(), updateOn.valueOf()))
-          }
+          updateOn = nullableMinDate(updateOn, task.postponedUntil)
           continue
         }
         unlocked.push(leaf)

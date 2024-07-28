@@ -9,6 +9,8 @@ export class UIState {
   _setShift: Setter<boolean>
   flipHorizontally: Accessor<boolean>
   _setFlipHorizontally: Setter<boolean>
+  hideBlockedSubTree: Accessor<boolean>
+  _setHideBlockedSubTree: Setter<boolean>
   
   constructor() {
     const [openedTask, setOpenedTask] = createSignal<number | null>(null)
@@ -23,6 +25,9 @@ export class UIState {
     const [flipHorizontally, setFlipHorizontally] = createSignal<boolean>(false)
     this.flipHorizontally = flipHorizontally
     this._setFlipHorizontally = setFlipHorizontally
+    const [hideBlockedSubTree, setHideBlockedSubTree] = createSignal<boolean>(false)
+    this.hideBlockedSubTree = hideBlockedSubTree
+    this._setHideBlockedSubTree = setHideBlockedSubTree
     
     const rawStored = localStorage.getItem('uistate')
     
@@ -33,6 +38,7 @@ export class UIState {
       this._setGoalTask(data.goalTask)
       this._setShift(data.shift)
       this._setFlipHorizontally(data.flipHorizontally)
+      this._setHideBlockedSubTree(data.hideBlockedSubTree)
     }
   }
   
@@ -41,7 +47,8 @@ export class UIState {
       openedTask: this.openedTask(),
       goalTask: this.goalTask(),
       shift: this.shift(),
-      flipHorizontally: this.flipHorizontally()
+      flipHorizontally: this.flipHorizontally(),
+      hideBlockedSubTree: this.hideBlockedSubTree(),
     }))
   }
   
@@ -62,6 +69,11 @@ export class UIState {
   
   setFlipHorizontally(value: boolean) {
     this._setFlipHorizontally(value)
+    this.saveState()
+  }
+  
+  setHideBlockedSubtree(value: boolean) {
+    this._setHideBlockedSubTree(value)
     this.saveState()
   }
 }
