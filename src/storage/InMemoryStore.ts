@@ -134,7 +134,28 @@ export class InMemoryStore implements Store {
       }
     }
     
+    this.cleanDeleted()
+    
     this.trigger()
+  }
+  
+  cleanDeleted() {
+    const tasks = Object.values(this.tasks)
+    
+    for (let i = 0; i < tasks.length; i++) {
+      const task = tasks[i]
+    
+      if (this.rootId === task.id) {
+        continue
+      }
+    
+      if (!this.parents[task.id] ||
+        this.parents[task.id].length === 0
+      ) {
+        delete this.tasks[task.id]
+        delete this.children[task.id]
+      }
+    }
   }
 
   save() {
