@@ -2,6 +2,7 @@ import { useStore } from "../storage/StoreContext"
 import { Button } from "./Button"
 import styles from './GlobalControls.module.css'
 import { HStack } from "./HStack"
+import { SettingsButton } from "./SettingsButton"
 
 export const GlobalControls = () => {
   const store = useStore()
@@ -9,6 +10,7 @@ export const GlobalControls = () => {
   return <div class={styles.cont}>
     <div class={styles.controls}>
       <HStack>
+      <SettingsButton/>
       <Button
         onClick={e => {
           const fileName = 'tasks.json'

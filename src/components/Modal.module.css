@@ -1,0 +1,8 @@
+.modal {
+    position: fixed;
+    right: 20px;
+    top: 60px;
+    background: var(--background);
+    padding: 16px;
+    border: 1px solid var(--inputBorder)
+}

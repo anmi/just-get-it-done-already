@@ -7,9 +7,7 @@ import { Spline } from "./Canvas/Spline"
 import { useUIState } from "../storage/UIState"
 import { Button } from "./Button"
 import { HStack } from "./HStack"
-import { Checkbox } from "./Checkbox"
-import { CheckboxLabel } from "./CheckboxLabel"
-import { Collapse } from "./Collapse"
+import { SettingsButton } from "./SettingsButton"
 
 interface BoardProps {
   id: number
@@ -19,8 +17,7 @@ export const Board = (props: BoardProps) => {
   const store = useStore()
   const uistate = useUIState()
 
-  const [showCompleted, setShowCompleted] = createSignal(false)
-  const rels = createMemo(() => store.getTree(props.id, showCompleted(), uistate.hideBlockedSubTree())())
+  const rels = createMemo(() => store.getTree(props.id, uistate.showCompleted(), uistate.hideBlockedSubTree())())
 
   const positions = createMemo(() => {
     return calcTreePositions(props.id, rels().relations, {
@@ -31,54 +28,30 @@ export const Board = (props: BoardProps) => {
   })
 
   return <div class={css.container}>
-    <HStack alignItems="start">
-      <Show when={uistate.goalTask() != null && store.getTask(uistate.goalTask()!)()}>
-        <HStack>
-          Goal:
-          <a href="#"
-            onClick={e => {
-              e.preventDefault()
-              uistate.setOpenedTask(props.id)
-            }}
-          >
-            {store.getTask(uistate.goalTask()!)().title}
-          </a>
-          <Button
-            size="s"
-            onClick={e => {
-              e.preventDefault()
-              uistate.setGoalTask(null)
-            }}
-          >Remove</Button>
-        </HStack>
-      </Show>
-      <Collapse title="Settings">
-        <HStack>
-          <CheckboxLabel>
-            <Checkbox value={showCompleted()} onChange={setShowCompleted} />
-            Show completed
-          </CheckboxLabel>
-          <CheckboxLabel>
-            <Checkbox value={uistate.shift()}
-              onChange={shift => uistate.setShift(shift)}
-            />
-            Shift
-          </CheckboxLabel>
-          <CheckboxLabel>
-            <Checkbox value={uistate.flipHorizontally()}
-              onChange={flip => uistate.setFlipHorizontally(flip)}
-            />
-            Flip horizontally
-          </CheckboxLabel>
-          <CheckboxLabel>
-            <Checkbox value={uistate.hideBlockedSubTree()}
-              onChange={flip => uistate.setHideBlockedSubtree(flip)}
-            />
-            Hide postponed subtrees
-          </CheckboxLabel>
-        </HStack>
-      </Collapse>
-    </HStack>
+    <div style={{ "min-height": "28px" }}>
+      <HStack alignItems="start">
+        <Show when={uistate.goalTask() != null && store.getTask(uistate.goalTask()!)()}>
+          <HStack>
+            Goal:
+            <a href="#"
+              onClick={e => {
+                e.preventDefault()
+                uistate.setOpenedTask(props.id)
+              }}
+            >
+              {store.getTask(uistate.goalTask()!)().title}
+            </a>
+            <Button
+              size="s"
+              onClick={e => {
+                e.preventDefault()
+                uistate.setGoalTask(null)
+              }}
+            >Remove</Button>
+          </HStack>
+        </Show>
+      </HStack>
+    </div>
     <div style={{
       height: `${positions().maxY}px`,
       width: `${positions().maxX}px`,

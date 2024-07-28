@@ -11,6 +11,8 @@ export class UIState {
   _setFlipHorizontally: Setter<boolean>
   hideBlockedSubTree: Accessor<boolean>
   _setHideBlockedSubTree: Setter<boolean>
+  showCompleted: Accessor<boolean>
+  _setShowCompleted: Setter<boolean>
   
   constructor() {
     const [openedTask, setOpenedTask] = createSignal<number | null>(null)
@@ -28,6 +30,9 @@ export class UIState {
     const [hideBlockedSubTree, setHideBlockedSubTree] = createSignal<boolean>(false)
     this.hideBlockedSubTree = hideBlockedSubTree
     this._setHideBlockedSubTree = setHideBlockedSubTree
+    const [showCompleted, _setShowCompleted] = createSignal<boolean>(false)
+    this.showCompleted = showCompleted
+    this._setShowCompleted = _setShowCompleted
     
     const rawStored = localStorage.getItem('uistate')
     
@@ -39,6 +44,7 @@ export class UIState {
       this._setShift(data.shift)
       this._setFlipHorizontally(data.flipHorizontally)
       this._setHideBlockedSubTree(data.hideBlockedSubTree)
+      this._setShowCompleted(data.showCompleted)
     }
   }
   
@@ -49,6 +55,7 @@ export class UIState {
       shift: this.shift(),
       flipHorizontally: this.flipHorizontally(),
       hideBlockedSubTree: this.hideBlockedSubTree(),
+      showCompleted: this.showCompleted(),
     }))
   }
   
@@ -74,6 +81,11 @@ export class UIState {
   
   setHideBlockedSubtree(value: boolean) {
     this._setHideBlockedSubTree(value)
+    this.saveState()
+  }
+  
+  setShowCompleted(value: boolean) {
+    this._setShowCompleted(value)
     this.saveState()
   }
 }
