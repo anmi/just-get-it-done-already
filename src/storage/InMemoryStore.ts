@@ -315,6 +315,9 @@ export class InMemoryStore implements Store {
     if (id == parentId) {
       return;
     }
+    if (id === positionId) {
+      return;
+    }
     const children = this.children[parentId] || []
     if (children.findIndex(p => p === id) != -1) {
       if (positionId) {
