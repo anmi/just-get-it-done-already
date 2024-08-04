@@ -8,7 +8,7 @@ interface Relation {
 
 export interface Store {
   getRootId(): number
-  createTask(parentId: number, draft: TaskDraft): void
+  createTask(parentId: number, draft: TaskDraft): Task
   getChildren(parentId: number): Accessor<number[]>
   getParents(parentId: number): Accessor<number[]>
   getTask(id: number): Accessor<Task>

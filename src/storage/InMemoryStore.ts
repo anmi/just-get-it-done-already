@@ -277,6 +277,8 @@ export class InMemoryStore implements Store {
     this.link(task.id, parentId)
 
     this.trigger()
+    
+    return task
   }
 
   getChildren(parentId: number) {
