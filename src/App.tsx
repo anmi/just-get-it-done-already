@@ -39,7 +39,16 @@ class JGIDAApi {
   }
   
   addTask(parentId: number, task: TaskDraft) {
-    this.store.createTask(parentId, task)
+    const baseTask: TaskDraft = {
+      title: '',
+      description: '',
+      result: '',
+      isPriorityList: false,
+    }
+    this.store.createTask(parentId, {
+      ...baseTask,
+      ...task
+    })
   }
 }
 
@@ -49,6 +58,12 @@ const App: Component = () => {
   
   const api = new JGIDAApi(store, uistate)
   ;(window as any).JGIDAAPI= api;
+  
+  window.addEventListener('message', e => {
+    if (e.data.type === 'API') {
+      eval(e.data.code)
+    }
+  })
 
   return (
     <div class={styles.App}>
