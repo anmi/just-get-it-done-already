@@ -273,8 +273,10 @@ export class InMemoryStore implements Store {
     }
 
     this.setTask(task)
-    
+
     this.link(task.id, parentId)
+    
+    this.recalculateAutodone(task.id)
 
     this.trigger()
     
@@ -315,6 +317,7 @@ export class InMemoryStore implements Store {
         isDone: false,
         postponedUntil: null,
         isPriorityList: false,
+        isAutodone: false,
       }
       this.setTask(task)
       const [f] = createSignal<Task>(task)
@@ -386,16 +389,66 @@ export class InMemoryStore implements Store {
     this.parents[id] = [...(this.parents[id] ?? []), parentId]
     this.trigger()
   }
+  
+  recalculateAutodone(id: number) {
+    const queue = [id]
+    const visited: {[id: number]: true } = {}
+
+    while (queue.length > 0) {
+      const current = queue.shift()
+      
+      if (!current)
+        continue
+
+      if (visited[current]) {
+        continue
+      }
+      
+      visited[current] = true
+      
+      const task = this.tasks[current]
+
+      if (task.isAutodone) {
+        const childrenIds = this.children[task.id] || []
+
+        let isEveryTaskDone = true
+        for (let i = 0; i < childrenIds.length; i++) {
+          const child = this.tasks[childrenIds[i]]
+          if (!child.isDone) {
+            isEveryTaskDone = false
+          }
+        }
+        
+        if (task.isDone !== isEveryTaskDone) {
+          this.setDone(task.id, isEveryTaskDone)
+        }
+      }
+      
+      const parents = this.parents[task.id] || []
+      
+      for (let i = 0; i < parents.length; i++) {
+        const parent = parents[i]
+        queue.push(parent)
+      }
+    }
+  }
 
   setDone(id: number, isDone: boolean) {
     const task = this.tasks[id]
 
     this.setTask({ ...task, isDone })
+    this.recalculateAutodone(id)
   }
   
   setIsPriorityList(id: number, isPriorityList: boolean): void {
     const task = this.tasks[id]
     this.setTask({ ...task, isPriorityList })
+  }
+  
+  setIsAutodone(id: number, isAutodone: boolean): void {
+    const task = this.tasks[id]
+    this.setTask({ ...task, isAutodone })
+    this.recalculateAutodone(id)
   }
 
   setTitle(id: number, title: string): void {

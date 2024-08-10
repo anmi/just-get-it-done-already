@@ -16,6 +16,7 @@ export interface Store {
   link(id: number, parentId: number, positionId?: number): void
   setDone(id: number, isDone: boolean): void
   setIsPriorityList(id: number, isPriorityList: boolean): void
+  setIsAutodone(id: number, isAutodone: boolean): void
   setTitle(id: number, title: string): void
   setDescription(id: number, description: string): void
   setResult(id: number, description: string): void

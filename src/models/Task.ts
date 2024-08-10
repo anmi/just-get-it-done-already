@@ -6,6 +6,7 @@ export interface Task {
   isDone: boolean
   postponedUntil: Date | null;
   isPriorityList: boolean;
+  isAutodone: boolean;
 }
 
 export interface TaskDraft {
@@ -13,6 +14,7 @@ export interface TaskDraft {
   description: string;
   result: string;
   isPriorityList: boolean;
+  isAutodone: boolean;
 }
 
 export const taskMethods = {

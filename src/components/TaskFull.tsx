@@ -14,6 +14,7 @@ import { Checkbox } from "./Checkbox"
 import { CheckboxLabel } from "./CheckboxLabel"
 import { Collapse } from "./Collapse"
 import { ParentList } from "./ParentList"
+import { TaskOptions } from "./TaskOptions"
 
 interface TaskFullProps {
   id: number
@@ -85,51 +86,7 @@ export const TaskFull = (props: TaskFullProps) => {
       </div>
       <div style={{ height: '16px' }}></div>
       <Collapse title="More options">
-        <CheckboxLabel>
-          <Checkbox
-            value={task().isPriorityList}
-            onChange={isPriority => store.setIsPriorityList(props.id, isPriority)}
-          />
-          Priority list
-        </CheckboxLabel>
-        <HStack>
-          <div>Postpone</div>
-          <Button size="s" onClick={() => {
-            store.postpone(props.id, new Date(new Date().valueOf() + 1000 * 60 * 5))
-          }}>5m</Button>
-          <Button size="s" onClick={() => {
-            store.postpone(props.id, new Date(new Date().valueOf() + 1000 * 60 * 10))
-          }}>10m</Button>
-          <Button size="s" onClick={() => {
-            store.postpone(props.id, new Date(new Date().valueOf() + 1000 * 60 * 30))
-          }}>30m</Button>
-          <Button size="s" onClick={() => {
-            store.postpone(props.id, new Date(new Date().valueOf() + 1000 * 60 * 60))
-          }}>1h</Button>
-          <Button size="s" onClick={() => {
-            store.postpone(props.id, new Date(new Date().valueOf() + 1000 * 60 * 60 * 2))
-          }}>2h</Button>
-          <Button size="s" onClick={() => {
-            store.postpone(props.id, new Date(new Date().valueOf() + 1000 * 60 * 60 * 4))
-          }}>4h</Button>
-          <Button size="s" onClick={() => {
-            store.postpone(props.id, new Date(new Date().valueOf() + 1000 * 60 * 60 * 24))
-          }}>day</Button>
-          <Show when={task().postponedUntil}>
-            <Button size="s" onClick={() => {
-              store.postpone(props.id, null)
-            }}>reset</Button>
-            <PostponeCountdown until={task().postponedUntil!} />
-          </Show>
-        </HStack>
-        <div>
-          <Button
-            size="s"
-            onClick={() => {
-              uiState.setGoalTask(props.id)
-            }}
-          >Set as goal</Button>
-        </div>
+        <TaskOptions id={task().id}/>
       </Collapse>
     </VStack>
   </div>
