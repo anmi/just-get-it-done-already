@@ -4,3 +4,15 @@
     background: var(--linkColor);
     padding: 2px 0;
 }
+
+.TaskBoardContainer {
+    overflow: hidden;
+    /* text-overflow: ellipsis; */
+    display: -webkit-box;
+    -webkit-line-clamp: 2; /* Number of lines */
+    -webkit-box-orient: vertical;
+    word-break: break-word;
+    position: absolute;
+    transition: left 300ms, top 300ms;
+    max-width: 172px;
+}

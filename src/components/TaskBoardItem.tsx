@@ -15,13 +15,12 @@ export const TaskBoardItem = (props: TaskBoardItemProps) => {
   const uistate = useUIState()
   const task = createMemo(() => store.getTask(props.id)())
 
-  return <div style={{
-    position: 'absolute',
-    left: `${props.left}px`,
-    top: `${props.top}px`,
-    transition: "left 300ms, top 300ms",
-    "max-width": '172px'
-  }}
+  return <div
+    style={{
+      left: `${props.left}px`,
+      top: `${props.top}px`,
+    }}
+    class={styles.TaskBoardContainer}
   >
     <a href="#"
       onClick={e => {
