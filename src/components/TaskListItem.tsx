@@ -1,4 +1,4 @@
-import { createMemo, Show } from "solid-js";
+import { createMemo, For, Show } from "solid-js";
 import { useStore } from "../storage/StoreContext";
 import { useUIState } from "../storage/UIState";
 import styles from './TaskListItem.module.css'
@@ -6,6 +6,8 @@ import { MarkdownPreview } from "./MarkdownPreview";
 import { Button } from "./Button";
 import { HStack } from "./HStack";
 import { Checkbox } from "./Checkbox";
+import { Text } from "./Text";
+import { VStack } from "./VStack";
 
 interface TaskListItemProps {
   parentId: number;
@@ -18,7 +20,11 @@ export const TaskListItem = (props: TaskListItemProps) => {
   const task = createMemo(() =>
     store.getTask(props.id)()
   )
-
+  
+  const alternativePath = createMemo(() =>  {
+    return store.getAletrnativePath(props.id, props.parentId)()
+  })
+  
   return <div class={styles.taskListItem}
     onDrop={(e) => {
       const dataTransfer = e.dataTransfer
@@ -37,6 +43,7 @@ export const TaskListItem = (props: TaskListItemProps) => {
       return false
     }}
   >
+  <VStack>
     <HStack>
       <Checkbox
         value={task().isDone}
@@ -65,8 +72,26 @@ export const TaskListItem = (props: TaskListItemProps) => {
         store.unlink(props.id, props.parentId)
       }}>X</Button>
     </HStack>
+    <Show when={alternativePath().length > 0}>
+      <HStack>
+        <Text variant="dim" size="s">
+          Dependency is duplicated through
+        </Text>
+        <For each={alternativePath()}>{task => 
+          <Text size="s">
+            <a href="#" onClick={e => {
+              e.preventDefault()
+              uistate.setOpenedTask(task.id)
+            }}>
+              {task.title}
+            </a>
+          </Text>
+        }</For>
+      </HStack>
+    </Show>
     <Show when={task().result !== ''}>
       <MarkdownPreview value={task().result} />
     </Show>
+  </VStack>
   </div>
 }

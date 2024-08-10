@@ -5,3 +5,7 @@
 .dim {
     color: var(--textDim);
 }
+
+.textS {
+    font-size: 12px;
+}

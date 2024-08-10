@@ -24,6 +24,7 @@ export interface Store {
     rootId: number, showCompleted: boolean, hideBlocked: boolean
   ): Accessor<{ relations: Relation[], unlocked: number[] }>
   postpone(id: number, until: Date | null): void
+  getAletrnativePath(id: number, parentId: number): Accessor<Task[]>
   
   updateFromJSON(value: string): void
 }

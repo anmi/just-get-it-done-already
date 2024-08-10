@@ -581,6 +581,34 @@ export class InMemoryStore implements Store {
     return rels
   }
   
+  getAletrnativePath(id: number, parentId: number): Accessor<Task[]> {
+    const [tasks, setTasks] = createSignal<Task[]>([])
+    
+    const upd = () => {
+      const children = this.children[parentId]
+      const tasks: Task[] = []
+      
+      for (let i = 0; i < children.length; i++) {
+        const child = children[i]
+        if (child === id) {
+          continue
+        }
+        
+        if (hasChild(child, id, this.children)) {
+          tasks.push(this.tasks[child])
+        }
+      }
+      
+      setTasks(() => tasks)
+    }
+    
+    upd()
+    
+    this.onUpdate(upd)
+
+    return tasks
+  }
+  
   postpone(id: number, until: Date | null): void {
     const task = this.tasks[id]
     this.setTask({
