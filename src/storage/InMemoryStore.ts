@@ -496,12 +496,14 @@ export class InMemoryStore implements Store {
       const leaves: number[] = []
       const leavesHash: { [key: number]: boolean } = {}
       let updateOn: Date | null = null
+      let skipResult = false
 
       while (queue.length > 0) {
         const current = queue.shift()
         if (!current) continue
         const { id, priority } = current
-        if (visited[id] && visited[id] > priority) {
+        skipResult = Boolean(visited[id])
+        if (visited[id] && visited[id] >= priority) {
           continue
         }
         visited[id] = priority
@@ -535,10 +537,12 @@ export class InMemoryStore implements Store {
               }
             }
             const isDone = task.isDone
-            result.push({
-              taskId: id,
-              dependsOnId: child
-            })
+            if (!skipResult) {
+              result.push({
+                taskId: id,
+                dependsOnId: child
+              })
+            }
             queue.unshift({
               id: child,
               priority: isDone ? 1 :
